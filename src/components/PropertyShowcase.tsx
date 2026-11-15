@@ -3,7 +3,7 @@ import { ChevronDown, Check, Sparkles } from 'lucide-react';
 import {
   ARCHITECTURAL_HIGHLIGHTS,
   TECHNICAL_ACCORDIONS,
-} from '../data/propertyData';
+} from '../content/propertyData';
 
 interface PropertyShowcaseProps {
   onRequestDossier: () => void;

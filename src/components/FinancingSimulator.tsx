@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { AlertCircle, Calculator, Send, RotateCcw } from 'lucide-react';
-import { BROKER_CONFIG } from '../data/propertyData';
+import { BROKER_CONFIG } from '../content/propertyData';
 import type { AttachedSimulation } from '../types/inquiry';
 
 const LISTED_PRICE = BROKER_CONFIG.referenceValue; // R$ 30.000.000

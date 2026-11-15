@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, Calendar, ChevronRight } from 'lucide-react';
-import { BROKER_CONFIG } from '../data/propertyData';
+import { BROKER_CONFIG } from '../content/propertyData';
 
 const NAV_LINKS = [
   { href: '#mansao', label: 'A Mansão' },

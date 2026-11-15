@@ -1,4 +1,4 @@
-import { BROKER_CONFIG } from '../data/propertyData';
+import { BROKER_CONFIG } from '../content/propertyData';
 
 export function Footer() {
   const year = new Date().getFullYear();

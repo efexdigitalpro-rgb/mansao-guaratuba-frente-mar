@@ -4,7 +4,7 @@ import {
   GALLERY_CATEGORIES,
   GALLERY_ITEMS,
   GalleryCategory,
-} from '../data/propertyData';
+} from '../content/propertyData';
 import { ResilientImage } from './ResilientImage';
 
 const MOBILE_INITIAL_LIMIT = 6;

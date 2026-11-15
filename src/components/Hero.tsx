@@ -1,5 +1,5 @@
 import { ArrowDownRight, Send } from 'lucide-react';
-import { HERO_MEDIA } from '../data/propertyData';
+import { HERO_MEDIA } from '../content/propertyData';
 import { ResilientImage } from './ResilientImage';
 
 const HERO_ATTRIBUTES = [

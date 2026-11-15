@@ -1,5 +1,5 @@
 import { MapPin, Navigation, Compass } from 'lucide-react';
-import { LANDMARKS } from '../data/propertyData';
+import { LANDMARKS } from '../content/propertyData';
 import { ResilientImage } from './ResilientImage';
 
 export function LocationSection() {
