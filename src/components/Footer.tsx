@@ -1,6 +1,8 @@
 import { BROKER_CONFIG } from '../content/propertyData';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export function Footer() {
+  const { t } = useLanguage();
   const year = new Date().getFullYear();
 
   return (
@@ -15,34 +17,36 @@ export function Footer() {
               {BROKER_CONFIG.company}
             </a>
             <p className="text-sm text-[#C8B8A2] leading-relaxed mt-3 max-w-md">
-              Apresentação oficial de propriedade exclusiva frente ao mar em Guaratuba, com
-              negociação direta com o proprietário e sem intermediação.
+              {t.footer.desc}
             </p>
             <div className="mt-5 text-xs text-[#EAE5DC] space-y-1.5">
               <p>
-                <span className="text-[#C8B8A2]">Modalidade:</span> {BROKER_CONFIG.creci}
+                <span className="text-[#C8B8A2]">{t.footer.modeLabel}</span> {t.footer.modeValue}
               </p>
               <p>
-                <span className="text-[#C8B8A2]">Atendimento:</span>{' '}
+                <span className="text-[#C8B8A2]">{t.footer.serviceLabel}</span>{' '}
                 <a href="#agendamento" className="text-[#C59B27] hover:underline">
-                  Formulário Privativo de Proposta
+                  {t.footer.serviceLink}
                 </a>
               </p>
               <p>
-                <span className="text-[#C8B8A2]">Localidade:</span> {BROKER_CONFIG.city}
+                <span className="text-[#C8B8A2]">{t.footer.locationLabel}</span>{' '}
+                {t.footer.locationValue}
               </p>
             </div>
           </div>
 
           <div className="md:col-span-3">
-            <p className="text-xs font-semibold text-[#FAF8F5] mb-3 sm:mb-4">Navegação</p>
+            <p className="text-xs font-semibold text-[#FAF8F5] mb-3 sm:mb-4">
+              {t.footer.navTitle}
+            </p>
             <ul className="space-y-1 sm:space-y-2.5 text-sm text-[#C8B8A2]">
               <li>
                 <a
                   href="#mansao"
                   className="inline-flex items-center min-h-[38px] sm:min-h-0 hover:text-[#C59B27] transition-colors"
                 >
-                  A Mansão
+                  {t.footer.navLinks.mansao}
                 </a>
               </li>
               <li>
@@ -50,7 +54,7 @@ export function Footer() {
                   href="#ambientes"
                   className="inline-flex items-center min-h-[38px] sm:min-h-0 hover:text-[#C59B27] transition-colors"
                 >
-                  Galeria de Ambientes
+                  {t.footer.navLinks.galeria}
                 </a>
               </li>
               <li>
@@ -58,7 +62,7 @@ export function Footer() {
                   href="#localizacao"
                   className="inline-flex items-center min-h-[38px] sm:min-h-0 hover:text-[#C59B27] transition-colors"
                 >
-                  Localização &amp; Distâncias
+                  {t.footer.navLinks.localizacao}
                 </a>
               </li>
               <li>
@@ -66,7 +70,7 @@ export function Footer() {
                   href="#simulador"
                   className="inline-flex items-center min-h-[38px] sm:min-h-0 hover:text-[#C59B27] transition-colors"
                 >
-                  Simulador de Proposta
+                  {t.footer.navLinks.simulador}
                 </a>
               </li>
               <li>
@@ -74,7 +78,7 @@ export function Footer() {
                   href="#agendamento"
                   className="inline-flex items-center min-h-[38px] sm:min-h-0 hover:text-[#C59B27] transition-colors"
                 >
-                  Agendar Visita
+                  {t.footer.navLinks.agendar}
                 </a>
               </li>
             </ul>
@@ -82,21 +86,15 @@ export function Footer() {
 
           <div className="md:col-span-4">
             <p className="text-xs font-semibold text-[#FAF8F5] mb-3 sm:mb-4">
-              Informações Legais &amp; Disponibilidade
+              {t.footer.legalTitle}
             </p>
-            <p className="text-xs text-[#C8B8A2] leading-relaxed">
-              Imóvel exclusivo sujeito à confirmação de disponibilidade, negociação direta de
-              valores e atualização cadastral sem aviso prévio. As simulações apresentadas têm
-              caráter meramente informativo e não constituem proposta vinculante de crédito.
-            </p>
+            <p className="text-xs text-[#C8B8A2] leading-relaxed">{t.footer.legalText}</p>
           </div>
         </div>
 
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-center sm:text-left text-xs text-[#9E9589]">
-          <p>
-            © {year} {BROKER_CONFIG.company} · {BROKER_CONFIG.creci}. Todos os direitos reservados.
-          </p>
-          <p>Mansão Contemporânea Frente ao Mar · Guaratuba, PR</p>
+          <p>{t.footer.copyright(year)}</p>
+          <p>{t.footer.bottomTag}</p>
         </div>
       </div>
     </footer>

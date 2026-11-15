@@ -4,12 +4,14 @@ import {
   ARCHITECTURAL_HIGHLIGHTS,
   TECHNICAL_ACCORDIONS,
 } from '../content/propertyData';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface PropertyShowcaseProps {
   onRequestDossier: () => void;
 }
 
 export function PropertyShowcase({ onRequestDossier }: PropertyShowcaseProps) {
+  const { t } = useLanguage();
   const [openAccordionId, setOpenAccordionId] = useState<string>(TECHNICAL_ACCORDIONS[0].id);
 
   const toggleAccordion = (id: string) => {
@@ -23,59 +25,58 @@ export function PropertyShowcase({ onRequestDossier }: PropertyShowcaseProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-12 items-end pb-10 sm:pb-14 border-b border-[#DCD3C6]">
           <div className="lg:col-span-7">
             <p className="text-xs sm:text-sm font-medium text-[#0F2942] mb-2 sm:mb-3">
-              Arquitetura &amp; Engenharia Residencial · Guaratuba, Paraná
+              {t.showcase.eyebrow}
             </p>
             <h2 className="font-display text-[clamp(1.65rem,3.2vw,2.85rem)] font-semibold leading-[1.15] tracking-tight text-[#1A1A1A] text-balance">
-              Projetada para contemplar a Baía de Guaratuba com conforto absoluto
+              {t.showcase.title}
             </h2>
           </div>
           <div className="lg:col-span-5">
             <p className="text-sm sm:text-base text-[#4A4640] leading-relaxed">
-              Cada ambiente equilibra materiais nobres, automação discreta e integração total entre
-              o interior e a orla. Da fachada em grafite e madeira ripada à passagem privativa para
-              a areia, a residência entrega privacidade e padrão construtivo raro no litoral
-              paranaense.
+              {t.showcase.intro}
             </p>
           </div>
         </div>
 
         {/* Asymmetric Bento Grid of Differentials */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 py-10 sm:py-14">
-          {ARCHITECTURAL_HIGHLIGHTS.map((item) => (
-            <article
-              key={item.index}
-              className={`bg-[#F2EDE6] border border-[#DFD7CA] rounded-lg p-5 sm:p-7 flex flex-col justify-between transition-colors duration-150 hover:border-[#C59B27] ${
-                item.spanWide ? 'lg:col-span-2' : 'lg:col-span-1'
-              }`}
-            >
-              <div>
-                <div className="flex items-center justify-between gap-4 mb-3 sm:mb-5 text-xs font-medium text-[#6B645B]">
-                  <span>{item.category}</span>
-                  <span className="tabular-nums font-semibold text-[#0F2942]">{item.index}</span>
+          {ARCHITECTURAL_HIGHLIGHTS.map((item) => {
+            const loc = t.showcase.highlights[item.index] ?? item;
+            return (
+              <article
+                key={item.index}
+                className={`bg-[#F2EDE6] border border-[#DFD7CA] rounded-lg p-5 sm:p-7 flex flex-col justify-between transition-colors duration-150 hover:border-[#C59B27] ${
+                  item.spanWide ? 'lg:col-span-2' : 'lg:col-span-1'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-4 mb-3 sm:mb-5 text-xs font-medium text-[#6B645B]">
+                    <span>{loc.category}</span>
+                    <span className="tabular-nums font-semibold text-[#0F2942]">{item.index}</span>
+                  </div>
+                  <h3 className="font-display text-lg sm:text-2xl font-semibold text-[#1A1A1A] leading-snug mb-2 sm:mb-3">
+                    {loc.title}
+                  </h3>
+                  <p className="text-sm sm:text-base text-[#4A4640] leading-relaxed">
+                    {loc.description}
+                  </p>
                 </div>
-                <h3 className="font-display text-lg sm:text-2xl font-semibold text-[#1A1A1A] leading-snug mb-2 sm:mb-3">
-                  {item.title}
-                </h3>
-                <p className="text-sm sm:text-base text-[#4A4640] leading-relaxed">
-                  {item.description}
-                </p>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
 
         {/* Technical Specifications Accordion + Direct Dossier Request */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 pt-6 sm:pt-8 items-start">
           <div className="lg:col-span-5">
             <p className="text-xs sm:text-sm font-medium text-[#0F2942] mb-2">
-              Memorial Descritivo
+              {t.showcase.dossierEyebrow}
             </p>
             <h3 className="font-display text-2xl sm:text-3xl font-semibold text-[#1A1A1A] leading-tight mb-3 sm:mb-4">
-              Ficha Técnica &amp; Acabamentos
+              {t.showcase.dossierTitle}
             </h3>
             <p className="text-sm sm:text-base text-[#4A4640] leading-relaxed mb-5 sm:mb-6">
-              Consulte os detalhes estruturais, equipamentos de lazer e soluções de conforto térmico
-              e acústico presentes na mansão.
+              {t.showcase.dossierDesc}
             </p>
             <button
               type="button"
@@ -83,13 +84,14 @@ export function PropertyShowcase({ onRequestDossier }: PropertyShowcaseProps) {
               className="w-full sm:w-auto min-h-[48px] inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold bg-[#0F2942] text-[#FAF8F5] hover:bg-[#173B5E] rounded-md transition-colors duration-150 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C59B27]"
             >
               <Sparkles className="w-4 h-4 text-[#C59B27] shrink-0" aria-hidden="true" />
-              Solicitar Dossiê Completo
+              {t.showcase.dossierButton}
             </button>
           </div>
 
           <div className="lg:col-span-7 border-t border-[#DCD3C6]">
             {TECHNICAL_ACCORDIONS.map((spec) => {
               const isOpen = openAccordionId === spec.id;
+              const locSpec = t.showcase.accordions[spec.id] ?? spec;
               return (
                 <div key={spec.id} className="border-b border-[#DCD3C6]">
                   <button
@@ -101,10 +103,10 @@ export function PropertyShowcase({ onRequestDossier }: PropertyShowcaseProps) {
                   >
                     <div>
                       <span className="block font-display text-base sm:text-xl font-semibold text-[#1A1A1A] group-hover:text-[#0F2942] transition-colors">
-                        {spec.title}
+                        {locSpec.title}
                       </span>
                       <span className="block text-xs sm:text-sm text-[#6B645B] mt-0.5">
-                        {spec.summary}
+                        {locSpec.summary}
                       </span>
                     </div>
                     <ChevronDown
@@ -118,7 +120,7 @@ export function PropertyShowcase({ onRequestDossier }: PropertyShowcaseProps) {
                   {isOpen && (
                     <div id={`spec-panel-${spec.id}`} className="pb-5 sm:pb-6 pr-2 sm:pr-8">
                       <ul className="space-y-2.5 sm:space-y-3">
-                        {spec.items.map((line) => (
+                        {locSpec.items.map((line) => (
                           <li
                             key={line}
                             className="flex items-start gap-2.5 sm:gap-3 text-sm sm:text-base text-[#3A3631] leading-relaxed"

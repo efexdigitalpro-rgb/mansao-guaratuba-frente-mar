@@ -41,27 +41,45 @@ const SEQUENTIAL_PHONE_PATTERNS = new Set([
   '987654321',
 ]);
 
-function validateBrazilianWhatsAppServer(raw: string): string | null {
-  let digits = raw.replace(/\D/g, '');
-  if ((digits.length === 12 || digits.length === 13) && digits.startsWith('55')) {
-    digits = digits.slice(2);
+function validatePhoneByLanguage(raw: string, lang: string): string | null {
+  const digits = raw.replace(/\D/g, '');
+  const isBrazilFormat =
+    lang === 'pt' || ((digits.length === 12 || digits.length === 13) && digits.startsWith('55'));
+
+  if (!isBrazilFormat) {
+    if (digits.length < 8 || digits.length > 15) {
+      return lang === 'es'
+        ? 'Ingrese un número de WhatsApp o teléfono válido con código de país.'
+        : 'Please enter a valid WhatsApp or phone number with country code.';
+    }
+    if (/^(\d)\1+$/.test(digits) || SEQUENTIAL_PHONE_PATTERNS.has(digits.slice(-8))) {
+      return lang === 'es'
+        ? 'Número inválido o repetido. Ingrese un teléfono real.'
+        : 'Invalid or repeated phone number. Please enter a real number.';
+    }
+    return null;
   }
-  if (digits.length < 10 || digits.length > 11) {
+
+  let brDigits = digits;
+  if ((brDigits.length === 12 || brDigits.length === 13) && brDigits.startsWith('55')) {
+    brDigits = brDigits.slice(2);
+  }
+  if (brDigits.length < 10 || brDigits.length > 11) {
     return 'Informe um número de WhatsApp / telefone válido com DDD.';
   }
-  const ddd = digits.slice(0, 2);
+  const ddd = brDigits.slice(0, 2);
   if (!VALID_BR_DDDS.has(ddd)) {
     return `DDD (${ddd}) inválido. Informe um DDD válido do Brasil.`;
   }
-  const local = digits.slice(2);
+  const local = brDigits.slice(2);
   const lastEight = local.slice(-8);
-  if (/^(\d)\1+$/.test(digits) || /^(\d)\1+$/.test(local) || /^(\d)\1+$/.test(lastEight)) {
+  if (/^(\d)\1+$/.test(brDigits) || /^(\d)\1+$/.test(local) || /^(\d)\1+$/.test(lastEight)) {
     return 'Número inválido ou repetido. Informe um WhatsApp verdadeiro.';
   }
   if (SEQUENTIAL_PHONE_PATTERNS.has(local) || SEQUENTIAL_PHONE_PATTERNS.has(lastEight)) {
     return 'Número sequencial inválido. Informe um WhatsApp verdadeiro.';
   }
-  if (digits.length === 11) {
+  if (brDigits.length === 11) {
     if (!/^9[1-9]\d{7}$/.test(local)) {
       return 'WhatsApp celular deve começar com 9 após o DDD.';
     }
@@ -74,6 +92,111 @@ function validateBrazilianWhatsAppServer(raw: string): string | null {
     return 'Número de telefone inválido após o DDD.';
   }
   return null;
+}
+
+interface RateCache {
+  usdToBrl: number;
+  updatedAt: string;
+  provider: string;
+  cachedAt: number;
+}
+
+const RATE_CACHE_TTL_MS = 15 * 60 * 1000;
+const FALLBACK_USD_TO_BRL = 5.65;
+let rateCache: RateCache | null = null;
+
+async function fetchLiveUsdToBrl(): Promise<{
+  usdToBrl: number;
+  updatedAt: string;
+  provider: string;
+  source: 'live' | 'fallback';
+}> {
+  if (rateCache && Date.now() - rateCache.cachedAt < RATE_CACHE_TTL_MS) {
+    return {
+      usdToBrl: rateCache.usdToBrl,
+      updatedAt: rateCache.updatedAt,
+      provider: rateCache.provider,
+      source: 'live',
+    };
+  }
+
+  try {
+    const res = await fetch('https://open.er-api.com/v6/latest/USD', {
+      signal: AbortSignal.timeout(4500),
+    });
+    if (res.ok) {
+      const data = (await res.json()) as {
+        rates?: { BRL?: number };
+        time_last_update_utc?: string;
+      };
+      const rate = data?.rates?.BRL;
+      if (typeof rate === 'number' && Number.isFinite(rate) && rate > 1 && rate < 20) {
+        rateCache = {
+          usdToBrl: Number(rate.toFixed(4)),
+          updatedAt: data.time_last_update_utc || new Date().toISOString(),
+          provider: 'ExchangeRate-API',
+          cachedAt: Date.now(),
+        };
+        return { ...rateCache, source: 'live' };
+      }
+    }
+  } catch {
+    // try next
+  }
+
+  try {
+    const res = await fetch('https://api.frankfurter.dev/v1/latest?base=USD&symbols=BRL', {
+      signal: AbortSignal.timeout(4500),
+    });
+    if (res.ok) {
+      const data = (await res.json()) as {
+        date?: string;
+        rates?: { BRL?: number };
+      };
+      const rate = data?.rates?.BRL;
+      if (typeof rate === 'number' && Number.isFinite(rate) && rate > 1 && rate < 20) {
+        rateCache = {
+          usdToBrl: Number(rate.toFixed(4)),
+          updatedAt: data.date || new Date().toISOString(),
+          provider: 'Frankfurter / ECB',
+          cachedAt: Date.now(),
+        };
+        return { ...rateCache, source: 'live' };
+      }
+    }
+  } catch {
+    // try next
+  }
+
+  try {
+    const res = await fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL', {
+      signal: AbortSignal.timeout(4500),
+    });
+    if (res.ok) {
+      const data = (await res.json()) as {
+        USDBRL?: { bid?: string; create_date?: string };
+      };
+      const bid = Number(data?.USDBRL?.bid);
+      if (Number.isFinite(bid) && bid > 1 && bid < 20) {
+        rateCache = {
+          usdToBrl: Number(bid.toFixed(4)),
+          updatedAt: data?.USDBRL?.create_date || new Date().toISOString(),
+          provider: 'AwesomeAPI',
+          cachedAt: Date.now(),
+        };
+        return { ...rateCache, source: 'live' };
+      }
+    }
+  } catch {
+    // fallback below
+  }
+
+  return {
+    usdToBrl: rateCache?.usdToBrl ?? FALLBACK_USD_TO_BRL,
+    updatedAt: rateCache?.updatedAt ?? new Date().toISOString(),
+    provider: 'Referência',
+    source: 'fallback',
+  };
 }
 
 const DATA_DIR = path.join(__dirname, 'data');
@@ -407,11 +530,26 @@ async function startServer() {
   const app = express();
   app.use(express.json({ limit: '256kb' }));
 
+  app.get('/api/cotacao', async (_req: Request, res: Response) => {
+    const quote = await fetchLiveUsdToBrl();
+    res.status(200).json({
+      ok: true,
+      base: 'USD',
+      target: 'BRL',
+      usdToBrl: quote.usdToBrl,
+      updatedAt: quote.updatedAt,
+      provider: quote.provider,
+      source: quote.source,
+    });
+  });
+
   app.post('/api/proposta', async (req: Request, res: Response) => {
     const body = (req.body || {}) as Record<string, unknown>;
     const name = typeof body.name === 'string' ? body.name.trim() : '';
     const email = typeof body.email === 'string' ? body.email.trim() : '';
     const phone = typeof body.phone === 'string' ? body.phone.trim() : '';
+    const lang =
+      body.lang === 'es' || body.lang === 'en' ? body.lang : 'pt';
 
     if (name.length < 3) {
       res.status(400).json({
@@ -427,7 +565,7 @@ async function startServer() {
       });
       return;
     }
-    const phoneError = validateBrazilianWhatsAppServer(phone);
+    const phoneError = validatePhoneByLanguage(phone, lang);
     if (phoneError) {
       res.status(400).json({
         ok: false,

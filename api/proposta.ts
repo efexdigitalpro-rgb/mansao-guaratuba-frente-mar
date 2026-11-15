@@ -33,27 +33,45 @@ interface VercelRequest extends IncomingMessage {
   body?: unknown;
 }
 
-function validateBrazilianWhatsApp(raw: string): string | null {
-  let digits = raw.replace(/\D/g, '');
-  if ((digits.length === 12 || digits.length === 13) && digits.startsWith('55')) {
-    digits = digits.slice(2);
+function validatePhoneByLanguage(raw: string, lang: string): string | null {
+  const digits = raw.replace(/\D/g, '');
+  const isBrazilFormat =
+    lang === 'pt' || ((digits.length === 12 || digits.length === 13) && digits.startsWith('55'));
+
+  if (!isBrazilFormat) {
+    if (digits.length < 8 || digits.length > 15) {
+      return lang === 'es'
+        ? 'Ingrese un número de WhatsApp o teléfono válido con código de país.'
+        : 'Please enter a valid WhatsApp or phone number with country code.';
+    }
+    if (/^(\d)\1+$/.test(digits) || SEQUENTIAL_PHONE_PATTERNS.has(digits.slice(-8))) {
+      return lang === 'es'
+        ? 'Número inválido o repetido. Ingrese un teléfono real.'
+        : 'Invalid or repeated phone number. Please enter a real number.';
+    }
+    return null;
   }
-  if (digits.length < 10 || digits.length > 11) {
+
+  let brDigits = digits;
+  if ((brDigits.length === 12 || brDigits.length === 13) && brDigits.startsWith('55')) {
+    brDigits = brDigits.slice(2);
+  }
+  if (brDigits.length < 10 || brDigits.length > 11) {
     return 'Informe um número de WhatsApp / telefone válido com DDD.';
   }
-  const ddd = digits.slice(0, 2);
+  const ddd = brDigits.slice(0, 2);
   if (!VALID_BR_DDDS.has(ddd)) {
     return `DDD (${ddd}) inválido. Informe um DDD válido do Brasil.`;
   }
-  const local = digits.slice(2);
+  const local = brDigits.slice(2);
   const lastEight = local.slice(-8);
-  if (/^(\d)\1+$/.test(digits) || /^(\d)\1+$/.test(local) || /^(\d)\1+$/.test(lastEight)) {
+  if (/^(\d)\1+$/.test(brDigits) || /^(\d)\1+$/.test(local) || /^(\d)\1+$/.test(lastEight)) {
     return 'Número inválido ou repetido. Informe um WhatsApp verdadeiro.';
   }
   if (SEQUENTIAL_PHONE_PATTERNS.has(local) || SEQUENTIAL_PHONE_PATTERNS.has(lastEight)) {
     return 'Número sequencial inválido. Informe um WhatsApp verdadeiro.';
   }
-  if (digits.length === 11) {
+  if (brDigits.length === 11) {
     if (!/^9[1-9]\d{7}$/.test(local)) {
       return 'WhatsApp celular deve começar com 9 após o DDD.';
     }
@@ -123,6 +141,7 @@ export default async function handler(req: VercelRequest, res: ServerResponse) {
   const name = typeof body.name === 'string' ? body.name.trim() : '';
   const email = typeof body.email === 'string' ? body.email.trim() : '';
   const phone = typeof body.phone === 'string' ? body.phone.trim() : '';
+  const lang = body.lang === 'es' || body.lang === 'en' ? body.lang : 'pt';
 
   if (name.length < 3) {
     sendJson(res, 400, {
@@ -138,7 +157,7 @@ export default async function handler(req: VercelRequest, res: ServerResponse) {
     });
     return;
   }
-  const phoneError = validateBrazilianWhatsApp(phone);
+  const phoneError = validatePhoneByLanguage(phone, lang);
   if (phoneError) {
     sendJson(res, 400, { ok: false, error: phoneError });
     return;

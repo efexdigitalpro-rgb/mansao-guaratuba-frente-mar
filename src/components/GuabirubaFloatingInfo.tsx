@@ -1,71 +1,10 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { TrendingUp, X } from 'lucide-react';
-
-interface InvestmentTopic {
-  number: string;
-  title: string;
-  points: { label?: string; text: string }[];
-}
-
-const GUABIRUBA_TOPICS: InvestmentTopic[] = [
-  {
-    number: '1',
-    title: 'Economia Forte e Polo Têxtil Consolidado',
-    points: [
-      {
-        label: 'Tradição e escala:',
-        text: 'A economia local é fortemente impulsionada pela indústria têxtil e de vestuário, com centenas de empresas gerando empregos formais e movimentando centenas de milhões de reais no Valor Adicional Fiscal (VAF).',
-      },
-      {
-        label: 'Crescimento do PIB:',
-        text: 'O Produto Interno Bruto (PIB) do município tem registrado forte expansão nominal, impulsionado por micro, pequenas e médias empresas dinâmicas.',
-      },
-    ],
-  },
-  {
-    number: '2',
-    title: 'Mercado Imobiliário e Déficit Habitacional',
-    points: [
-      {
-        label: 'Valorização patrimonial:',
-        text: 'O crescimento da infraestrutura urbana, a chegada de novos loteamentos planejados e a atuação de construtoras locais criam uma forte janela de ganho de capital a médio e longo prazo.',
-      },
-      {
-        label: 'Demanda por moradia:',
-        text: 'Há um déficit habitacional e uma procura crescente por imóveis — com destaque para bairros em expansão como o São Pedro —, atraindo tanto investidores de renda com aluguéis quanto famílias que querem sair de grandes centros.',
-      },
-    ],
-  },
-  {
-    number: '3',
-    title: 'Qualidade de Vida e Segurança',
-    points: [
-      {
-        label: 'IDH elevado:',
-        text: 'O município possui um Índice de Desenvolvimento Humano (IDH) de 0,754, refletindo bons índices de bem-estar social.',
-      },
-      {
-        label: 'Segurança e tranquilidade:',
-        text: 'Guabiruba é reconhecida pelos baixos índices de criminalidade e por manter um forte senso de comunidade interiorano, onde ruas e loteamentos conservam a liberdade para as famílias.',
-      },
-      {
-        label: 'Proximidade com a natureza:',
-        text: 'Rodeada por morros, trilhas ecológicas e cachoeiras (como o Morro São José e o Morro Santo Antônio), a cidade atrai o turismo ecológico e quem busca ar puro sem se distanciar dos grandes polos do Vale Europeu.',
-      },
-    ],
-  },
-  {
-    number: '4',
-    title: 'Proximidade com Brusque e Infraestrutura Regional',
-    points: [
-      {
-        text: 'Localizada colada a Brusque, Guabiruba aproveita a infraestrutura de um grande polo comercial e industrial vizinho, além de receber investimentos contínuos em melhorias viárias e de contenção de cheias na região.',
-      },
-    ],
-  },
-];
+import { useLanguage } from '../contexts/LanguageContext';
 
 export function GuabirubaFloatingInfo() {
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -89,105 +28,103 @@ export function GuabirubaFloatingInfo() {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        aria-label="Investir em Guabiruba (Santa Catarina)"
-        title="Investir em Guabiruba (SC)"
+        aria-label={t.guabiruba.fabAria}
+        title={t.guabiruba.fabTitle}
         className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#0F2942] text-[#C59B27] border-2 border-[#C59B27] shadow-2xl hover:bg-[#173B5E] hover:scale-105 active:scale-95 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C59B27] focus-visible:ring-offset-2"
       >
         <TrendingUp className="w-6 h-6" aria-hidden="true" />
       </button>
 
       {/* Modal with Guabiruba Investment Content */}
-      {isOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="guabiruba-modal-title"
-          onClick={() => setIsOpen(false)}
-          className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
-        >
+      {isOpen &&
+        typeof document !== 'undefined' &&
+        createPortal(
           <div
-            onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-2xl max-h-[88vh] flex flex-col bg-[#FAF8F5] text-[#1A1A1A] border border-[#C59B27]/50 rounded-lg shadow-2xl overflow-hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="guabiruba-modal-title"
+            onClick={() => setIsOpen(false)}
+            className="fixed inset-0 z-[60] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
           >
-            {/* Header */}
-            <div className="bg-[#0F2942] text-[#FAF8F5] px-5 sm:px-7 py-5 flex items-start justify-between gap-4 border-b border-[#C59B27]/30 shrink-0">
-              <div>
-                <p className="text-xs font-medium text-[#C59B27] mb-1">
-                  Oportunidade Estratégica · Santa Catarina
-                </p>
-                <h2
-                  id="guabiruba-modal-title"
-                  className="font-display text-xl sm:text-2xl font-semibold leading-snug"
-                >
-                  Investir em Guabiruba (SC)
-                </h2>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                aria-label="Fechar janela"
-                className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-white/10 hover:bg-white/20 text-[#FAF8F5] shrink-0 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Scrollable Body */}
-            <div className="p-5 sm:p-7 overflow-y-auto space-y-5 text-sm sm:text-[15px] leading-relaxed text-[#3A3631]">
-              <p className="text-[#1A1A1A] font-medium">
-                Investir em Guabiruba (Santa Catarina) é uma escolha estratégica para quem busca o
-                equilíbrio entre força industrial, qualidade de vida e valorização imobiliária.
-              </p>
-              <p className="text-sm font-semibold text-[#0F2942]">
-                Os principais motivos para investir no município incluem:
-              </p>
-
-              <div className="space-y-4">
-                {GUABIRUBA_TOPICS.map((topic) => (
-                  <div
-                    key={topic.number}
-                    className="bg-[#F2EDE6] border border-[#DFD7CA] rounded-md p-4 sm:p-5"
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-2xl max-h-[88vh] flex flex-col bg-[#FAF8F5] text-[#1A1A1A] border border-[#C59B27]/50 rounded-lg shadow-2xl overflow-hidden"
+            >
+              {/* Header */}
+              <div className="bg-[#0F2942] text-[#FAF8F5] px-5 sm:px-7 py-5 flex items-start justify-between gap-4 border-b border-[#C59B27]/30 shrink-0">
+                <div>
+                  <p className="text-xs font-medium text-[#C59B27] mb-1">
+                    {t.guabiruba.eyebrow}
+                  </p>
+                  <h2
+                    id="guabiruba-modal-title"
+                    className="font-display text-xl sm:text-2xl font-semibold leading-snug"
                   >
-                    <h3 className="font-display text-base sm:text-lg font-semibold text-[#0F2942] mb-2.5">
-                      {topic.number}. {topic.title}
-                    </h3>
-                    <ul className="space-y-2">
-                      {topic.points.map((pt, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-xs sm:text-sm">
-                          <span
-                            aria-hidden="true"
-                            className="text-[#C59B27] font-bold mt-0.5 shrink-0"
-                          >
-                            •
-                          </span>
-                          <span>
-                            {pt.label && (
-                              <strong className="text-[#1A1A1A]">{pt.label} </strong>
-                            )}
-                            {pt.text}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+                    {t.guabiruba.modalTitle}
+                  </h2>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
+                  aria-label={t.guabiruba.closeAria}
+                  className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-white/10 hover:bg-white/20 text-[#FAF8F5] shrink-0 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Scrollable Body */}
+              <div className="p-5 sm:p-7 overflow-y-auto space-y-5 text-sm sm:text-[15px] leading-relaxed text-[#3A3631]">
+                <p className="text-[#1A1A1A] font-medium">{t.guabiruba.intro1}</p>
+                <p className="text-sm font-semibold text-[#0F2942]">{t.guabiruba.intro2}</p>
+
+                <div className="space-y-4">
+                  {t.guabiruba.topics.map((topic) => (
+                    <div
+                      key={topic.number}
+                      className="bg-[#F2EDE6] border border-[#DFD7CA] rounded-md p-4 sm:p-5"
+                    >
+                      <h3 className="font-display text-base sm:text-lg font-semibold text-[#0F2942] mb-2.5">
+                        {topic.number}. {topic.title}
+                      </h3>
+                      <ul className="space-y-2">
+                        {topic.points.map((pt, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-xs sm:text-sm">
+                            <span
+                              aria-hidden="true"
+                              className="text-[#C59B27] font-bold mt-0.5 shrink-0"
+                            >
+                              •
+                            </span>
+                            <span>
+                              {pt.label && (
+                                <strong className="text-[#1A1A1A]">{pt.label} </strong>
+                              )}
+                              {pt.text}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="px-5 sm:px-7 py-4 bg-[#F2EDE6] border-t border-[#DFD7CA] flex items-center justify-end gap-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
+                  className="min-h-[44px] px-5 py-2.5 text-sm font-semibold bg-[#0F2942] text-[#FAF8F5] hover:bg-[#173B5E] rounded-md transition-colors"
+                >
+                  {t.guabiruba.closeBtn}
+                </button>
               </div>
             </div>
-
-            {/* Footer */}
-            <div className="px-5 sm:px-7 py-4 bg-[#F2EDE6] border-t border-[#DFD7CA] flex items-center justify-end gap-3 shrink-0">
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="min-h-[44px] px-5 py-2.5 text-sm font-semibold bg-[#0F2942] text-[#FAF8F5] hover:bg-[#173B5E] rounded-md transition-colors"
-              >
-                Fechar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </>
   );
 }

@@ -8,9 +8,11 @@ import { FinancingSimulator } from './components/FinancingSimulator';
 import { LeadFormSection } from './components/LeadFormSection';
 import { Footer } from './components/Footer';
 import { GuabirubaFloatingInfo } from './components/GuabirubaFloatingInfo';
+import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import type { AttachedSimulation, InquiryContext } from './types/inquiry';
 
-export function App() {
+function AppContent() {
+  const { t } = useLanguage();
   const [inquiryContext, setInquiryContext] = useState<InquiryContext | null>(null);
 
   useEffect(() => {
@@ -46,30 +48,29 @@ export function App() {
 
   const handleRequestDossier = useCallback(() => {
     scrollToFormWithContext({
-      subject: 'Solicitação de Dossiê Completo',
-      notes:
-        'Gostaria de receber o memorial descritivo completo e informações sobre a mansão em Guaratuba.',
+      subject: t.appContexts.dossierSubject,
+      notes: t.appContexts.dossierNotes,
     });
-  }, [scrollToFormWithContext]);
+  }, [scrollToFormWithContext, t.appContexts.dossierNotes, t.appContexts.dossierSubject]);
 
   const handleConsultRoom = useCallback(
     (roomTitle: string) => {
       scrollToFormWithContext({
-        subject: `Consulta sobre ambiente: ${roomTitle}`,
-        notes: `Gostaria de mais detalhes sobre o ambiente "${roomTitle}".`,
+        subject: t.appContexts.consultRoomSubject(roomTitle),
+        notes: t.appContexts.consultRoomNotes(roomTitle),
       });
     },
-    [scrollToFormWithContext]
+    [scrollToFormWithContext, t.appContexts]
   );
 
   const handleSendSimulation = useCallback(
     (simulation: AttachedSimulation) => {
       scrollToFormWithContext({
-        subject: 'Proposta Simulada — Mansão Frente ao Mar',
+        subject: t.appContexts.simulationSubject,
         simulation,
       });
     },
-    [scrollToFormWithContext]
+    [scrollToFormWithContext, t.appContexts.simulationSubject]
   );
 
   return (
@@ -99,6 +100,14 @@ export function App() {
       <Footer />
       <GuabirubaFloatingInfo />
     </div>
+  );
+}
+
+export function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 }
 

@@ -114,3 +114,61 @@ export function validateBrazilianWhatsApp(raw: string): PhoneValidationResult {
 
   return { valid: true };
 }
+
+export function formatPhoneByLanguage(raw: string, lang: 'pt' | 'es' | 'en'): string {
+  if (lang === 'pt') {
+    return formatBrPhoneInput(raw);
+  }
+  const hasPlus = raw.trim().startsWith('+');
+  const cleaned = raw.replace(/[^\d+\s()-]/g, '').slice(0, 22);
+  if (!hasPlus && cleaned.replace(/\D/g, '').length > 0) {
+    return cleaned;
+  }
+  return cleaned;
+}
+
+export function validatePhoneByLanguage(
+  raw: string,
+  lang: 'pt' | 'es' | 'en'
+): PhoneValidationResult {
+  if (lang === 'pt') {
+    return validateBrazilianWhatsApp(raw);
+  }
+
+  const digits = raw.replace(/\D/g, '');
+  if ((digits.length === 12 || digits.length === 13) && digits.startsWith('55')) {
+    return validateBrazilianWhatsApp(raw);
+  }
+
+  if (digits.length === 0) {
+    return {
+      valid: false,
+      error:
+        lang === 'es'
+          ? 'Ingrese su teléfono / WhatsApp con código de país.'
+          : 'Please enter your phone / WhatsApp with country code.',
+    };
+  }
+
+  if (digits.length < 8 || digits.length > 15) {
+    return {
+      valid: false,
+      error:
+        lang === 'es'
+          ? 'Número incompleto. Ingrese código de país y número válido.'
+          : 'Incomplete number. Please enter country code and a valid number.',
+    };
+  }
+
+  if (/^(\d)\1+$/.test(digits) || SEQUENTIAL_PATTERNS.has(digits.slice(-8))) {
+    return {
+      valid: false,
+      error:
+        lang === 'es'
+          ? 'Número inválido o repetido. Ingrese un WhatsApp real.'
+          : 'Invalid or repeated number. Please enter a real WhatsApp number.',
+    };
+  }
+
+  return { valid: true };
+}
