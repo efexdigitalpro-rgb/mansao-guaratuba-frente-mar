@@ -1,0 +1,6 @@
+{
+  "name": "Mansão Frente ao Mar | Muraski Imóveis",
+  "description": "Mansão Contemporânea de Alto Padrão Frente ao Mar em Guaratuba, PR. Apresentação exclusiva pé na areia com simulador e agendamento privativo — Muraski Imóveis.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
