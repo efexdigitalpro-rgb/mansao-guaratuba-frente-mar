@@ -268,13 +268,13 @@ export default async function handler(req: VercelRequest, res: ServerResponse) {
     }
   }
 
-  // 3. FormSubmit server-side (zero secrets)
+  // 3. FormSubmit server-side (sem Secret, e-mail oculto apenas no servidor)
   try {
-    const reqOriginHeader = typeof req.headers.origin === 'string' ? req.headers.origin : '';
-    const reqRefererHeader = typeof req.headers.referer === 'string' ? req.headers.referer : '';
-    const hostHeader = typeof req.headers.host === 'string' ? `https://${req.headers.host}` : '';
-    const originHeader = reqOriginHeader || hostHeader || 'https://mansao-guaratuba.vercel.app';
-    const refererHeader = reqRefererHeader || `${originHeader.replace(/\/$/, '')}/`;
+    const formSubmitTarget = encodeURIComponent(
+      (process.env.FORMSUBMIT_TOKEN || DESTINATION_EMAIL).trim()
+    );
+    const originHeader = 'https://mansao-guaratuba-frente-mar.vercel.app';
+    const refererHeader = 'https://mansao-guaratuba-frente-mar.vercel.app/';
 
     const payload: Record<string, string> = {
       name,
@@ -291,7 +291,7 @@ export default async function handler(req: VercelRequest, res: ServerResponse) {
     if (simulationSummary) payload.Proposta_Simulada = simulationSummary;
     if (notes) payload.Observacoes = notes;
 
-    await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(DESTINATION_EMAIL)}`, {
+    await fetch(`https://formsubmit.co/ajax/${formSubmitTarget}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

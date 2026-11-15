@@ -7,6 +7,7 @@ import { LocationSection } from './components/LocationSection';
 import { FinancingSimulator } from './components/FinancingSimulator';
 import { LeadFormSection } from './components/LeadFormSection';
 import { Footer } from './components/Footer';
+import { GuabirubaFloatingInfo } from './components/GuabirubaFloatingInfo';
 import type { AttachedSimulation, InquiryContext } from './types/inquiry';
 
 export function App() {
@@ -96,6 +97,7 @@ export function App() {
         </div>
       </main>
       <Footer />
+      <GuabirubaFloatingInfo />
     </div>
   );
 }

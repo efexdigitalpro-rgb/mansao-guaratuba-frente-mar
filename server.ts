@@ -337,12 +337,13 @@ async function dispatchEmail(
     }
   }
 
-  // 4. FormSubmit server-side (sem Secret, e-mail destino oculto no servidor)
+  // 4. FormSubmit server-side (sem Secret, e-mail oculto apenas no servidor)
   try {
-    const formSubmitTarget = encodeURIComponent(DESTINATION_EMAIL);
-    const originHeader =
-      requestOrigin || process.env.APP_URL?.trim() || 'https://mansao-guaratuba.app';
-    const refererHeader = requestReferer || `${originHeader.replace(/\/$/, '')}/`;
+    const formSubmitTarget = encodeURIComponent(
+      (process.env.FORMSUBMIT_TOKEN || DESTINATION_EMAIL).trim()
+    );
+    const originHeader = 'https://mansao-guaratuba-frente-mar.vercel.app';
+    const refererHeader = 'https://mansao-guaratuba-frente-mar.vercel.app/';
 
     const simulationSummary = record.simulation
       ? [
