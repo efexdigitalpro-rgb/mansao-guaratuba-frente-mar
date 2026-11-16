@@ -4,16 +4,17 @@ import { Hero } from './components/Hero';
 import { PropertyShowcase } from './components/PropertyShowcase';
 import { GallerySection } from './components/GallerySection';
 import { LocationSection } from './components/LocationSection';
-import { FinancingSimulator } from './components/FinancingSimulator';
 import { LeadFormSection } from './components/LeadFormSection';
 import { Footer } from './components/Footer';
 import { GuabirubaFloatingInfo } from './components/GuabirubaFloatingInfo';
+import { ProposalModal } from './components/ProposalModal';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
-import type { AttachedSimulation, InquiryContext } from './types/inquiry';
+import type { InquiryContext } from './types/inquiry';
 
 function AppContent() {
   const { t } = useLanguage();
   const [inquiryContext, setInquiryContext] = useState<InquiryContext | null>(null);
+  const [isProposalOpen, setIsProposalOpen] = useState(false);
 
   useEffect(() => {
     const sections = document.querySelectorAll<HTMLElement>('.reveal-section');
@@ -38,46 +39,45 @@ function AppContent() {
     return () => observer.disconnect();
   }, []);
 
-  const scrollToFormWithContext = useCallback((ctx: Omit<InquiryContext, 'id'>) => {
+  const openBlankProposal = useCallback(() => {
+    setInquiryContext((prev) => (prev?.simulation ? prev : null));
+    setIsProposalOpen(true);
+  }, []);
+
+  const openSimulatorModal = useCallback(() => {
+    setInquiryContext(null);
+    setIsProposalOpen(true);
+  }, []);
+
+  const openProposalWithContext = useCallback((ctx: Omit<InquiryContext, 'id'>) => {
     setInquiryContext({ id: Date.now(), ...ctx });
-    const target = document.getElementById('agendamento');
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    setIsProposalOpen(true);
   }, []);
 
   const handleRequestDossier = useCallback(() => {
-    scrollToFormWithContext({
+    openProposalWithContext({
       subject: t.appContexts.dossierSubject,
       notes: t.appContexts.dossierNotes,
+      initialStep: 'dados',
     });
-  }, [scrollToFormWithContext, t.appContexts.dossierNotes, t.appContexts.dossierSubject]);
+  }, [openProposalWithContext, t.appContexts.dossierNotes, t.appContexts.dossierSubject]);
 
   const handleConsultRoom = useCallback(
     (roomTitle: string) => {
-      scrollToFormWithContext({
+      openProposalWithContext({
         subject: t.appContexts.consultRoomSubject(roomTitle),
         notes: t.appContexts.consultRoomNotes(roomTitle),
+        initialStep: 'dados',
       });
     },
-    [scrollToFormWithContext, t.appContexts]
-  );
-
-  const handleSendSimulation = useCallback(
-    (simulation: AttachedSimulation) => {
-      scrollToFormWithContext({
-        subject: t.appContexts.simulationSubject,
-        simulation,
-      });
-    },
-    [scrollToFormWithContext, t.appContexts.simulationSubject]
+    [openProposalWithContext, t.appContexts]
   );
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF8F5] text-[#1A1A1A]">
-      <Header />
+      <Header onOpenProposal={openBlankProposal} onOpenSimulator={openSimulatorModal} />
       <main className="flex-1">
-        <Hero />
+        <Hero onOpenProposal={openBlankProposal} />
         <div className="reveal-section">
           <PropertyShowcase onRequestDossier={handleRequestDossier} />
         </div>
@@ -88,17 +88,17 @@ function AppContent() {
           <LocationSection />
         </div>
         <div className="reveal-section">
-          <FinancingSimulator onSendProposal={handleSendSimulation} />
-        </div>
-        <div className="reveal-section">
-          <LeadFormSection
-            inquiryContext={inquiryContext}
-            onClearContext={() => setInquiryContext(null)}
-          />
+          <LeadFormSection onOpenProposal={openBlankProposal} />
         </div>
       </main>
-      <Footer />
+      <Footer onOpenProposal={openBlankProposal} onOpenSimulator={openSimulatorModal} />
       <GuabirubaFloatingInfo />
+      <ProposalModal
+        isOpen={isProposalOpen}
+        onClose={() => setIsProposalOpen(false)}
+        inquiryContext={inquiryContext}
+        onClearContext={() => setInquiryContext(null)}
+      />
     </div>
   );
 }

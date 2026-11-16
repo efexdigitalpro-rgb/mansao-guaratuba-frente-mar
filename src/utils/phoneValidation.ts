@@ -23,10 +23,22 @@ const SEQUENTIAL_PATTERNS = new Set([
 ]);
 
 export function normalizeBrPhoneDigits(raw: string): string {
+  const trimmed = raw.trim();
   let digits = raw.replace(/\D/g, '');
-  if ((digits.length === 12 || digits.length === 13) && digits.startsWith('55')) {
+
+  // Remove DDI +55 / 55 quando digitado com código do país (ex.: +55 41 99999-8888)
+  if (
+    digits.startsWith('55') &&
+    (trimmed.startsWith('+') || digits.length >= 12)
+  ) {
     digits = digits.slice(2);
   }
+
+  // Remove zero à esquerda do DDD (ex.: 041 99999-8888 -> 41999998888)
+  if (digits.startsWith('0') && digits.length >= 3) {
+    digits = digits.slice(1);
+  }
+
   return digits.slice(0, 11);
 }
 

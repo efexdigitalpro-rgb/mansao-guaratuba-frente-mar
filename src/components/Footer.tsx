@@ -1,7 +1,12 @@
 import { BROKER_CONFIG } from '../content/propertyData';
 import { useLanguage } from '../contexts/LanguageContext';
 
-export function Footer() {
+interface FooterProps {
+  onOpenProposal: () => void;
+  onOpenSimulator: () => void;
+}
+
+export function Footer({ onOpenProposal, onOpenSimulator }: FooterProps) {
   const { t } = useLanguage();
   const year = new Date().getFullYear();
 
@@ -25,9 +30,13 @@ export function Footer() {
               </p>
               <p>
                 <span className="text-[#C8B8A2]">{t.footer.serviceLabel}</span>{' '}
-                <a href="#agendamento" className="text-[#C59B27] hover:underline">
+                <button
+                  type="button"
+                  onClick={onOpenProposal}
+                  className="text-[#C59B27] hover:underline text-left"
+                >
                   {t.footer.serviceLink}
-                </a>
+                </button>
               </p>
               <p>
                 <span className="text-[#C8B8A2]">{t.footer.locationLabel}</span>{' '}
@@ -66,20 +75,22 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a
-                  href="#simulador"
-                  className="inline-flex items-center min-h-[38px] sm:min-h-0 hover:text-[#C59B27] transition-colors"
+                <button
+                  type="button"
+                  onClick={onOpenSimulator}
+                  className="inline-flex items-center min-h-[38px] sm:min-h-0 hover:text-[#C59B27] transition-colors text-left"
                 >
                   {t.footer.navLinks.simulador}
-                </a>
+                </button>
               </li>
               <li>
-                <a
-                  href="#agendamento"
-                  className="inline-flex items-center min-h-[38px] sm:min-h-0 hover:text-[#C59B27] transition-colors"
+                <button
+                  type="button"
+                  onClick={onOpenProposal}
+                  className="inline-flex items-center min-h-[38px] sm:min-h-0 hover:text-[#C59B27] transition-colors text-left"
                 >
                   {t.footer.navLinks.agendar}
-                </a>
+                </button>
               </li>
             </ul>
           </div>

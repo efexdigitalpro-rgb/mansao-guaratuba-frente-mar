@@ -72,7 +72,12 @@ const FLAG_OPTIONS: {
   },
 ];
 
-export function Header() {
+interface HeaderProps {
+  onOpenProposal: () => void;
+  onOpenSimulator: () => void;
+}
+
+export function Header({ onOpenProposal, onOpenSimulator }: HeaderProps) {
   const { language, setLanguage, t } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -81,7 +86,6 @@ export function Header() {
     { href: '#mansao', label: t.header.nav.mansao },
     { href: '#ambientes', label: t.header.nav.ambientes },
     { href: '#localizacao', label: t.header.nav.localizacao },
-    { href: '#simulador', label: t.header.nav.simulador },
   ];
 
   useEffect(() => {
@@ -122,6 +126,13 @@ export function Header() {
               {link.label}
             </a>
           ))}
+          <button
+            type="button"
+            onClick={onOpenSimulator}
+            className="relative py-1 whitespace-nowrap shrink-0 hover:text-[#FAF8F5] transition-colors after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[1px] after:bg-[#C59B27] hover:after:w-full after:transition-all after:duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C59B27] rounded-sm"
+          >
+            {t.header.nav.simulador}
+          </button>
         </nav>
 
         {/* Zone 3: 3 Language/Currency Flags (ES, BR, US) + CTA + Mobile Menu Trigger */}
@@ -153,13 +164,14 @@ export function Header() {
             })}
           </div>
 
-          <a
-            href="#agendamento"
+          <button
+            type="button"
+            onClick={onOpenProposal}
             className="hidden sm:inline-flex items-center gap-2 px-3.5 lg:px-4 py-2 text-xs font-semibold tracking-wide bg-[#C59B27] text-[#1A1A1A] hover:bg-[#D4AA36] rounded-md transition-colors duration-150 whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FAF8F5]"
           >
             <Calendar className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
             {t.header.cta}
-          </a>
+          </button>
 
           <button
             type="button"
@@ -192,14 +204,28 @@ export function Header() {
                 <ChevronRight className="w-4 h-4 text-[#C59B27]" aria-hidden="true" />
               </a>
             ))}
-            <a
-              href="#agendamento"
-              onClick={() => setMobileMenuOpen(false)}
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenSimulator();
+              }}
+              className="min-h-[48px] py-3 flex items-center justify-between text-base font-medium text-[#EAE5DC] hover:text-[#C59B27] border-b border-white/10 transition-colors text-left"
+            >
+              <span>{t.header.nav.simulador}</span>
+              <ChevronRight className="w-4 h-4 text-[#C59B27]" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenProposal();
+              }}
               className="mt-4 min-h-[48px] inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold bg-[#C59B27] text-[#1A1A1A] hover:bg-[#D4AA36] rounded-md transition-colors whitespace-nowrap"
             >
               <Calendar className="w-4 h-4" aria-hidden="true" />
               {t.header.cta}
-            </a>
+            </button>
           </nav>
         </div>
       )}

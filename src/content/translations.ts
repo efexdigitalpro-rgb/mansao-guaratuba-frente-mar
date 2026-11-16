@@ -179,6 +179,15 @@ export interface SiteTranslations {
     sendButton: string;
     warningStrong: string;
     warningText: string;
+    negotiateOptionTitle: string;
+    negotiateOptionDesc: string;
+    simulateOptionTitle: string;
+    simulateOptionDesc: string;
+    negotiateSelectedBadge: string;
+    negotiateCtaButton: string;
+    negotiateSubject: string;
+    negotiateNotes: string;
+    negotiateModalSummary: string;
   };
   leadForm: {
     eyebrow: string;
@@ -193,9 +202,14 @@ export interface SiteTranslations {
     namePlaceholder: string;
     emailLabel: string;
     emailPlaceholder: string;
+    emailValid: string;
     phoneLabel: string;
     phonePlaceholder: string;
     phoneValid: string;
+    cityLabel: string;
+    cityPlaceholder: string;
+    stateLabel: string;
+    statePlaceholder: string;
     dateLabel: string;
     visitModeLabel: string;
     visitInPerson: string;
@@ -212,6 +226,8 @@ export interface SiteTranslations {
     errorName: string;
     errorEmail: string;
     errorPhoneFallback: string;
+    errorCity: string;
+    errorState: string;
     errorServerFallback: string;
     errorConnection: string;
     modalTitle: string;
@@ -219,6 +235,51 @@ export interface SiteTranslations {
     modalClose: string;
     modalCloseAria: string;
     defaultSubject: string;
+    openFormCta: string;
+    openFormSubnote: string;
+    cardEyebrow: string;
+    cardTitle: string;
+    cardStep1: string;
+    cardStep2: string;
+  };
+  proposalModal: {
+    dialogTitle: string;
+    closeAria: string;
+    step1Tab: string;
+    step2Tab: string;
+    paymentTypeLabel: string;
+    cashOption: string;
+    financedOption: string;
+    negotiateOption: string;
+    proposalValueLabel: string;
+    presetListed: string;
+    presetMinus5: string;
+    presetMinus10: string;
+    downPctLabel: string;
+    downValLabel: string;
+    termLabel: string;
+    rateLabel: string;
+    presetDirectRate: string;
+    presetBankRate: string;
+    summaryFinanced: string;
+    summarySacFirst: string;
+    summaryPriceFixed: string;
+    summaryCashTotal: string;
+    summaryNegotiateLabel: string;
+    summaryNegotiateDesc: string;
+    continueToData: string;
+    editValues: string;
+    backToValues: string;
+    cashOfferSummary: (val: string) => string;
+    negotiateOfferSummary: (listed: string) => string;
+    financedOfferSummary: (params: {
+      offer: string;
+      down: string;
+      months: number;
+      rate: string;
+    }) => string;
+    cashSubject: string;
+    negotiateSubject: string;
   };
   footer: {
     desc: string;
@@ -270,7 +331,7 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       mobileNavAria: 'Navegação mobile',
       openMenu: 'Abrir menu',
       closeMenu: 'Fechar menu',
-      cta: 'Agendar Visita Exclusiva',
+      cta: 'Faça sua proposta',
       languageSelectorLabel: 'Selecionar idioma e moeda',
       nav: {
         mansao: 'A Mansão',
@@ -284,7 +345,7 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       h1: 'Mansão Contemporânea Frente ao Mar — Direto com o Proprietário',
       description:
         "1.100 m² de arquitetura autoral pé na areia com piscina frente mar, espelho d'água, escadaria flutuante em vidro, elevador privativo, adega climatizada, espaço gourmet com chopeira, academia e home cinema com teto estrelado.",
-      ctaPrimary: 'Enviar Proposta / Agendar Visita',
+      ctaPrimary: 'Faça sua proposta',
       ctaSecondary: 'Explorar Imóvel',
       fallbackTitle: 'Mansão Contemporânea Frente ao Mar — Guaratuba, PR',
       heroAlt:
@@ -647,7 +708,7 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       resetDesktop: 'Restaurar cenário padrão',
       title: 'Simulador de Financiamento & Proposta',
       subtitle:
-        'Simule sua proposta editando os valores ou ajustando as barras para comparar entrada, parcelas mensais e custo total nos sistemas SAC e Price lado a lado.',
+        'Ajuste entrada, prazo e taxa anual para comparar parcelas mensais e custo total nos sistemas SAC e Price com base no valor anunciado.',
       listedPriceLabel: 'Preço anunciado (fixo)',
       rateNoteLive: (rateStr) => `Dólar comercial hoje: ${rateStr}`,
       rateNoteFallback: (rateStr) => `Taxa referencial: ${rateStr}`,
@@ -700,6 +761,17 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       warningStrong: 'Atenção:',
       warningText:
         'Os valores acima são apenas uma simulação. As taxas podem alterar para mais ou para menos conforme as condições do seu banco, e não incluem correção monetária, seguros ou tarifas.',
+      negotiateOptionTitle: 'Negociar pessoalmente',
+      negotiateOptionDesc:
+        'Combinar condições, forma de pagamento e visita diretamente com o proprietário',
+      simulateOptionTitle: 'Quero simular entrada e financiamento',
+      simulateOptionDesc: 'Comparar parcelas SAC e Price sobre o valor anunciado',
+      negotiateSelectedBadge: 'Opção selecionada: Negociar pessoalmente com o proprietário',
+      negotiateCtaButton: 'Solicitar Negociação Pessoal',
+      negotiateSubject: 'Negociar Pessoalmente com o Proprietário',
+      negotiateNotes:
+        'Tenho interesse no imóvel e gostaria de negociar pessoalmente diretamente com o proprietário.',
+      negotiateModalSummary: 'Negociar pessoalmente · Valor anunciado:',
     },
     leadForm: {
       eyebrow: 'Atendimento Privativo · Direto com o Proprietário',
@@ -719,9 +791,14 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       namePlaceholder: 'Seu nome completo',
       emailLabel: 'Seu e-mail',
       emailPlaceholder: 'seuemail@exemplo.com',
+      emailValid: 'E-mail válido',
       phoneLabel: 'Telefone / WhatsApp',
       phonePlaceholder: '(00) 00000-0000',
       phoneValid: 'WhatsApp / telefone válido',
+      cityLabel: 'Cidade',
+      cityPlaceholder: 'Ex.: Curitiba',
+      stateLabel: 'Estado',
+      statePlaceholder: 'Ex.: PR',
       dateLabel: 'Melhor data para visita (opcional)',
       visitModeLabel: 'Modalidade de atendimento',
       visitInPerson: 'Presencial',
@@ -733,13 +810,15 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
         'Escreva sua proposta, condições de pagamento ou melhor horário para retorno',
       submitButton: 'Enviar Proposta e Mensagem',
       submittingButton: 'Enviando...',
-      requiredNote: '* Nome, e-mail e telefone são obrigatórios',
+      requiredNote: '* Nome, e-mail, telefone, cidade e estado são obrigatórios',
       warningStrong: 'Aviso:',
       warningText:
         'Este cálculo é apenas uma simulação. As taxas podem alterar para mais ou para menos conforme seu banco.',
       errorName: 'Por favor, informe seu nome completo para enviar a mensagem.',
       errorEmail: 'Informe um endereço de e-mail válido para enviar a mensagem.',
       errorPhoneFallback: 'Informe um número de WhatsApp / telefone válido com DDD.',
+      errorCity: 'Informe sua cidade para enviar a mensagem.',
+      errorState: 'Informe seu estado (UF) para enviar a mensagem.',
       errorServerFallback:
         'Não foi possível enviar sua mensagem. Verifique nome, e-mail e telefone e tente novamente.',
       errorConnection: 'Erro de conexão ao enviar sua mensagem. Tente novamente em instantes.',
@@ -748,6 +827,48 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       modalClose: 'Fechar',
       modalCloseAria: 'Fechar janela de confirmação',
       defaultSubject: 'Proposta / Agendamento de Visita',
+      openFormCta: 'Faça sua proposta e envie',
+      openFormSubnote: 'Abre em tela limpa e fixa · Sem rolagem indesejada',
+      cardEyebrow: 'Canal Direto · Sem Intermediários',
+      cardTitle: 'Envie valores e agende seu atendimento em 2 passos',
+      cardStep1:
+        '1. Defina o valor da proposta e se será à vista, parcelado ou negociar direto com o proprietário',
+      cardStep2: '2. Preencha seu nome, e-mail e WhatsApp e envie direto ao proprietário',
+    },
+    proposalModal: {
+      dialogTitle: 'Faça sua Proposta',
+      closeAria: 'Fechar janela de proposta',
+      step1Tab: '1. Valores da Proposta',
+      step2Tab: '2. Seus Dados e Envio',
+      paymentTypeLabel: 'Forma de pagamento pretendida',
+      cashOption: 'À vista',
+      financedOption: 'Entrada + Parcelas',
+      negotiateOption: 'A negociar',
+      proposalValueLabel: 'Valor da sua proposta',
+      presetListed: 'Valor anunciado',
+      presetMinus5: '-5%',
+      presetMinus10: '-10%',
+      downPctLabel: 'Entrada (%)',
+      downValLabel: 'Valor da entrada',
+      termLabel: 'Prazo (meses)',
+      rateLabel: 'Taxa anual estimada (% a.a.)',
+      presetDirectRate: '8,4% · Direto',
+      presetBankRate: '12% · Bancário',
+      summaryFinanced: 'Saldo a financiar',
+      summarySacFirst: '1ª parcela SAC',
+      summaryPriceFixed: 'Parcela fixa Price',
+      summaryCashTotal: 'Pagamento à vista',
+      summaryNegotiateLabel: 'Negociação direta',
+      summaryNegotiateDesc: 'Valores e condições combinados diretamente com o proprietário',
+      continueToData: 'Continuar para Seus Dados',
+      editValues: 'Editar valores',
+      backToValues: 'Voltar aos valores',
+      cashOfferSummary: (val) => `Proposta à vista: ${val}`,
+      negotiateOfferSummary: (listed) => `A negociar diretamente · Referência: ${listed}`,
+      financedOfferSummary: ({ offer, down, months, rate }) =>
+        `Proposta: ${offer} · Entrada: ${down} · ${months} meses (${rate}% a.a.)`,
+      cashSubject: 'Proposta à Vista — Mansão Frente ao Mar',
+      negotiateSubject: 'Proposta A Negociar — Mansão Frente ao Mar',
     },
     footer: {
       desc: 'Apresentação oficial de propriedade exclusiva frente ao mar em Guaratuba, com negociação direta com o proprietário e sem intermediação.',
@@ -858,7 +979,7 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       mobileNavAria: 'Navegación móvil',
       openMenu: 'Abrir menú',
       closeMenu: 'Cerrar menú',
-      cta: 'Agendar Visita Exclusiva',
+      cta: 'Haz tu propuesta',
       languageSelectorLabel: 'Seleccionar idioma y moneda',
       nav: {
         mansao: 'La Mansión',
@@ -872,7 +993,7 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       h1: 'Mansión Contemporánea Frente al Mar — Directo con el Propietario',
       description:
         '1.100 m² de arquitectura de autor en primera línea de playa con piscina frente al mar, espejo de agua, escalera flotante de vidrio, ascensor privado, cava climatizada, espacio gourmet con tirador de cerveza, gimnasio y cine en casa con techo estrellado.',
-      ctaPrimary: 'Enviar Propuesta / Agendar Visita',
+      ctaPrimary: 'Haz tu propuesta',
       ctaSecondary: 'Explorar Propiedad',
       fallbackTitle: 'Mansión Contemporánea Frente al Mar — Guaratuba, Brasil',
       heroAlt:
@@ -1235,7 +1356,7 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       resetDesktop: 'Restaurar escenario base',
       title: 'Simulador de Financiamiento y Propuesta',
       subtitle:
-        'Simule su oferta en dólares estadounidenses (convertidos a la cotización real del día) editando importes o ajustando las barras para comparar los sistemas SAC y Price.',
+        'Ajuste el pago inicial, el plazo y la tasa sobre el valor publicado en dólares (cotización real del día) para comparar los sistemas SAC y Price.',
       listedPriceLabel: 'Precio publicado (USD hoy)',
       rateNoteLive: (rateStr) => `Dólar del día: ${rateStr}`,
       rateNoteFallback: (rateStr) => `Tipo de cambio ref.: ${rateStr}`,
@@ -1288,6 +1409,17 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       warningStrong: 'Atención:',
       warningText:
         'Los valores anteriores son solo una simulación. Las tasas pueden variar al alza o a la baja según su banco y la cotización cambiaria vigente.',
+      negotiateOptionTitle: 'Negociar personalmente',
+      negotiateOptionDesc:
+        'Acordar condiciones, forma de pago y visita directamente con el propietario',
+      simulateOptionTitle: 'Quiero simular entrada y financiamiento',
+      simulateOptionDesc: 'Comparar cuotas SAC y Price sobre el precio publicado',
+      negotiateSelectedBadge: 'Opción seleccionada: Negociar personalmente con el propietario',
+      negotiateCtaButton: 'Solicitar Negociación Personal',
+      negotiateSubject: 'Negociar Personalmente con el Propietario',
+      negotiateNotes:
+        'Estoy interesado en la propiedad y me gustaría negociar personalmente directamente con el propietario.',
+      negotiateModalSummary: 'Negociar personalmente · Precio publicado:',
     },
     leadForm: {
       eyebrow: 'Atención Privada · Directo con el Propietario',
@@ -1307,9 +1439,14 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       namePlaceholder: 'Su nombre completo',
       emailLabel: 'Su correo electrónico',
       emailPlaceholder: 'correo@ejemplo.com',
+      emailValid: 'Correo electrónico válido',
       phoneLabel: 'Teléfono / WhatsApp',
       phonePlaceholder: '+34 600 000 000 o WhatsApp',
       phoneValid: 'Teléfono / WhatsApp válido',
+      cityLabel: 'Ciudad',
+      cityPlaceholder: 'Ej.: Madrid',
+      stateLabel: 'Estado / Provincia',
+      statePlaceholder: 'Ej.: Madrid',
       dateLabel: 'Fecha preferida de visita (opcional)',
       visitModeLabel: 'Modalidad de atención',
       visitInPerson: 'Presencial',
@@ -1321,13 +1458,15 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
         'Indique su propuesta en USD o BRL, condiciones de pago u horario ideal de contacto',
       submitButton: 'Enviar Propuesta y Mensaje',
       submittingButton: 'Enviando...',
-      requiredNote: '* Nombre, correo y teléfono son obligatorios',
+      requiredNote: '* Nombre, correo, teléfono, ciudad y estado son obligatorios',
       warningStrong: 'Aviso:',
       warningText:
         'Este cálculo es solo una simulación. Las tasas pueden cambiar al alza o a la baja según su entidad bancaria.',
       errorName: 'Por favor, ingrese su nombre completo para enviar el mensaje.',
       errorEmail: 'Ingrese un correo electrónico válido para enviar el mensaje.',
       errorPhoneFallback: 'Ingrese un número de teléfono o WhatsApp válido con código de país.',
+      errorCity: 'Ingrese su ciudad para enviar el mensaje.',
+      errorState: 'Ingrese su estado o provincia para enviar el mensaje.',
       errorServerFallback:
         'No fue posible enviar su mensaje. Verifique nombre, correo y teléfono e intente nuevamente.',
       errorConnection: 'Error de conexión al enviar su mensaje. Inténtelo nuevamente en unos instantes.',
@@ -1336,6 +1475,48 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       modalClose: 'Cerrar',
       modalCloseAria: 'Cerrar ventana de confirmación',
       defaultSubject: 'Propuesta / Agendamiento de Visita',
+      openFormCta: 'Haz tu propuesta y envía',
+      openFormSubnote: 'Ventana fija y limpia · Sin saltos al escribir',
+      cardEyebrow: 'Canal Directo · Sin Intermediarios',
+      cardTitle: 'Envíe su propuesta y agende atención en 2 pasos',
+      cardStep1:
+        '1. Defina el valor de su oferta y si es al contado, financiado o negociar directo con el propietario',
+      cardStep2: '2. Complete su nombre, correo y WhatsApp y envíe directo al propietario',
+    },
+    proposalModal: {
+      dialogTitle: 'Haz tu Propuesta',
+      closeAria: 'Cerrar ventana de propuesta',
+      step1Tab: '1. Valores de la Oferta',
+      step2Tab: '2. Tus Datos y Envío',
+      paymentTypeLabel: 'Modalidad de pago deseada',
+      cashOption: 'Al contado',
+      financedOption: 'Entrada + Cuotas',
+      negotiateOption: 'A negociar',
+      proposalValueLabel: 'Valor de tu propuesta',
+      presetListed: 'Valor publicado',
+      presetMinus5: '-5%',
+      presetMinus10: '-10%',
+      downPctLabel: 'Entrada (%)',
+      downValLabel: 'Valor de entrada',
+      termLabel: 'Plazo (meses)',
+      rateLabel: 'Tasa anual estimada (% anual)',
+      presetDirectRate: '8,4% · Directo',
+      presetBankRate: '12% · Bancario',
+      summaryFinanced: 'Saldo a financiar',
+      summarySacFirst: '1ª cuota SAC',
+      summaryPriceFixed: 'Cuota fija Price',
+      summaryCashTotal: 'Pago al contado',
+      summaryNegotiateLabel: 'Negociación directa',
+      summaryNegotiateDesc: 'Valores y condiciones acordados directamente con el propietario',
+      continueToData: 'Continuar a Tus Datos',
+      editValues: 'Editar valores',
+      backToValues: 'Volver a valores',
+      cashOfferSummary: (val) => `Oferta al contado: ${val}`,
+      negotiateOfferSummary: (listed) => `A negociar directamente · Referencia: ${listed}`,
+      financedOfferSummary: ({ offer, down, months, rate }) =>
+        `Oferta: ${offer} · Entrada: ${down} · ${months} meses (${rate}% anual)`,
+      cashSubject: 'Propuesta al Contado — Mansión Frente al Mar',
+      negotiateSubject: 'Propuesta A Negociar — Mansión Frente al Mar',
     },
     footer: {
       desc: 'Presentación oficial de propiedad exclusiva frente al mar en Guaratuba (Brasil), en negociación directa con el propietario y sin intermediarios.',
@@ -1446,7 +1627,7 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       mobileNavAria: 'Mobile navigation',
       openMenu: 'Open menu',
       closeMenu: 'Close menu',
-      cta: 'Schedule Private Viewing',
+      cta: 'Make an Offer',
       languageSelectorLabel: 'Select language and currency',
       nav: {
         mansao: 'The Mansion',
@@ -1460,7 +1641,7 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       h1: 'Contemporary Oceanfront Mansion — Direct From Owner',
       description:
         '1,100 m² (11,840 sq ft) of signature beachfront architecture featuring an oceanfront pool, reflecting pond, floating glass staircase, private elevator, climate-controlled wine cellar, gourmet lounge with draft beer tap, fitness studio, and starlit home cinema.',
-      ctaPrimary: 'Submit Offer / Book Viewing',
+      ctaPrimary: 'Make an Offer',
       ctaSecondary: 'Explore Property',
       fallbackTitle: 'Contemporary Oceanfront Mansion — Guaratuba, Brazil',
       heroAlt:
@@ -1823,7 +2004,7 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       resetDesktop: 'Reset default scenario',
       title: 'Financing & Purchase Offer Simulator',
       subtitle:
-        "Model your offer in US Dollars (converted at today's real exchange rate) by editing values or dragging sliders to compare down payment, monthly installments, and total cost under SAC and Price schedules.",
+        "Adjust down payment, term, and annual rate on the asking price in US Dollars (converted at today's real exchange rate) to compare SAC and Price schedules side by side.",
       listedPriceLabel: 'Asking price (Live USD)',
       rateNoteLive: (rateStr) => `Today's rate: ${rateStr}`,
       rateNoteFallback: (rateStr) => `Reference rate: ${rateStr}`,
@@ -1876,6 +2057,17 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       warningStrong: 'Notice:',
       warningText:
         'Figures above are for simulation only. Interest rates may shift up or down depending on your bank and prevailing FX rates.',
+      negotiateOptionTitle: 'Negotiate in person',
+      negotiateOptionDesc:
+        'Discuss terms, payment structure, and viewing directly with the owner',
+      simulateOptionTitle: 'I want to simulate down payment & financing',
+      simulateOptionDesc: 'Compare SAC and Price installments on the asking price',
+      negotiateSelectedBadge: 'Selected option: Negotiate in person with the owner',
+      negotiateCtaButton: 'Request In-Person Negotiation',
+      negotiateSubject: 'Negotiate In Person with Owner',
+      negotiateNotes:
+        'I am interested in the property and would like to negotiate terms in person directly with the owner.',
+      negotiateModalSummary: 'Negotiate in person · Asking price:',
     },
     leadForm: {
       eyebrow: 'Private Concierge · Direct Owner Contact',
@@ -1895,9 +2087,14 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       namePlaceholder: 'Your full name',
       emailLabel: 'Your email',
       emailPlaceholder: 'you@example.com',
+      emailValid: 'Valid email address',
       phoneLabel: 'Phone / WhatsApp',
       phonePlaceholder: '+1 (555) 000-0000 or WhatsApp',
       phoneValid: 'Valid WhatsApp / phone number',
+      cityLabel: 'City',
+      cityPlaceholder: 'e.g. Miami',
+      stateLabel: 'State / Province',
+      statePlaceholder: 'e.g. FL',
       dateLabel: 'Preferred viewing date (optional)',
       visitModeLabel: 'Viewing format',
       visitInPerson: 'In-Person',
@@ -1909,13 +2106,15 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
         'Share your offer in USD or BRL, payment structure, or preferred time to connect',
       submitButton: 'Send Offer & Message',
       submittingButton: 'Sending...',
-      requiredNote: '* Name, email, and phone are required',
+      requiredNote: '* Name, email, phone, city, and state are required',
       warningStrong: 'Notice:',
       warningText:
         'This calculation is a simulation only. Final rates may adjust higher or lower depending on your bank.',
       errorName: 'Please enter your full name to send your message.',
       errorEmail: 'Please enter a valid email address.',
       errorPhoneFallback: 'Please enter a valid phone or WhatsApp number with country code.',
+      errorCity: 'Please enter your city.',
+      errorState: 'Please enter your state or province.',
       errorServerFallback:
         'Unable to send your message. Please verify your name, email, and phone number and try again.',
       errorConnection: 'Connection error while sending your message. Please try again shortly.',
@@ -1924,6 +2123,48 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       modalClose: 'Close',
       modalCloseAria: 'Close confirmation window',
       defaultSubject: 'Purchase Offer / Private Viewing Request',
+      openFormCta: 'Make an Offer & Send',
+      openFormSubnote: 'Opens in a steady, distraction-free view',
+      cardEyebrow: 'Direct Line · Zero Intermediaries',
+      cardTitle: 'Send your offer & contact info in 2 quick steps',
+      cardStep1:
+        '1. Set your offer price and cash, installment terms, or negotiate directly with the owner',
+      cardStep2: '2. Enter your name, email & WhatsApp and submit directly to the owner',
+    },
+    proposalModal: {
+      dialogTitle: 'Make Your Offer',
+      closeAria: 'Close offer window',
+      step1Tab: '1. Offer Values',
+      step2Tab: '2. Your Info & Send',
+      paymentTypeLabel: 'Preferred payment structure',
+      cashOption: 'All Cash',
+      financedOption: 'Down Payment + Terms',
+      negotiateOption: 'To Negotiate',
+      proposalValueLabel: 'Your offer amount',
+      presetListed: 'Listed price',
+      presetMinus5: '-5%',
+      presetMinus10: '-10%',
+      downPctLabel: 'Down payment (%)',
+      downValLabel: 'Down payment amount',
+      termLabel: 'Term (months)',
+      rateLabel: 'Estimated annual rate (% p.a.)',
+      presetDirectRate: '8.4% · Direct',
+      presetBankRate: '12% · Bank',
+      summaryFinanced: 'Financed balance',
+      summarySacFirst: '1st SAC installment',
+      summaryPriceFixed: 'Fixed Price installment',
+      summaryCashTotal: 'All-cash offer',
+      summaryNegotiateLabel: 'Direct negotiation',
+      summaryNegotiateDesc: 'Price and payment terms agreed directly with the owner',
+      continueToData: 'Continue to Your Info',
+      editValues: 'Edit values',
+      backToValues: 'Back to values',
+      cashOfferSummary: (val) => `All-cash offer: ${val}`,
+      negotiateOfferSummary: (listed) => `Open to negotiate · Listed: ${listed}`,
+      financedOfferSummary: ({ offer, down, months, rate }) =>
+        `Offer: ${offer} · Down: ${down} · ${months} months (${rate}% p.a.)`,
+      cashSubject: 'All-Cash Offer — Oceanfront Mansion',
+      negotiateSubject: 'Negotiable Offer — Oceanfront Mansion',
     },
     footer: {
       desc: 'Official presentation of an exclusive oceanfront residence in Guaratuba, Brazil — offered directly by the owner without intermediaries.',

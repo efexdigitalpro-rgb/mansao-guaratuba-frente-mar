@@ -18,4 +18,6 @@ export interface InquiryContext {
   subject: string;
   notes?: string;
   simulation?: AttachedSimulation;
+  negotiateInPerson?: boolean;
+  initialStep?: 'valores' | 'dados';
 }

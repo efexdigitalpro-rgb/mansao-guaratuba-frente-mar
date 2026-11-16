@@ -3,7 +3,11 @@ import { BROKER_CONFIG, HERO_MEDIA } from '../content/propertyData';
 import { ResilientImage } from './ResilientImage';
 import { useLanguage } from '../contexts/LanguageContext';
 
-export function Hero() {
+interface HeroProps {
+  onOpenProposal: () => void;
+}
+
+export function Hero({ onOpenProposal }: HeroProps) {
   const { t, isUsd, formatActiveCurrency, formatUsdRateLabel } = useLanguage();
 
   return (
@@ -54,13 +58,14 @@ export function Hero() {
             </div>
 
             <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 sm:gap-4">
-              <a
-                href="#agendamento"
+              <button
+                type="button"
+                onClick={onOpenProposal}
                 className="min-h-[48px] inline-flex items-center justify-center gap-2.5 px-6 py-3.5 text-sm font-semibold bg-[#C59B27] text-[#1A1A1A] hover:bg-[#D4AA36] active:scale-[0.99] rounded-md transition-all duration-150 whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FAF8F5]"
               >
                 <Send className="w-4 h-4 shrink-0" aria-hidden="true" />
                 {t.hero.ctaPrimary}
-              </a>
+              </button>
 
               <a
                 href="#mansao"
