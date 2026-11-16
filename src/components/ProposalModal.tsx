@@ -4,8 +4,11 @@ import {
   AlertCircle,
   ArrowLeft,
   ArrowRight,
+  Check,
   CheckCircle2,
+  Copy,
   Loader2,
+  MessageCircle,
   Send,
   X,
 } from 'lucide-react';
@@ -73,6 +76,9 @@ export function ProposalModal({
   const [notes, setNotes] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [sentWhatsappUrl, setSentWhatsappUrl] = useState('');
+  const [sentWhatsappText, setSentWhatsappText] = useState('');
+  const [copiedMsg, setCopiedMsg] = useState(false);
 
   const todayIso = new Date().toISOString().split('T')[0];
 
@@ -316,9 +322,11 @@ export function ProposalModal({
       const data = (await response.json().catch(() => ({}))) as {
         ok?: boolean;
         error?: string;
+        whatsappUrl?: string;
+        whatsappMessage?: string;
       };
 
-      if (!response.ok || !data.ok) {
+      if (!response.ok || !data.ok || !data.whatsappUrl) {
         const fallbackMsg =
           response.status >= 500
             ? t.leadForm.errorConnection
@@ -326,6 +334,11 @@ export function ProposalModal({
         setErrorMsg(data.error || fallbackMsg);
         return;
       }
+
+      const targetWhatsappUrl = data.whatsappUrl;
+      setSentWhatsappUrl(targetWhatsappUrl);
+      setSentWhatsappText(data.whatsappMessage || '');
+      setCopiedMsg(false);
 
       setName('');
       setEmail('');
@@ -340,6 +353,15 @@ export function ProposalModal({
       setNotes('');
       onClearContext();
       setIsSent(true);
+
+      // Dispara abertura direta da conversa no WhatsApp sem window.open
+      const anchor = document.createElement('a');
+      anchor.href = targetWhatsappUrl;
+      anchor.target = '_blank';
+      anchor.rel = 'noopener noreferrer';
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
     } catch {
       setErrorMsg(t.leadForm.errorConnection);
     } finally {
@@ -439,25 +461,67 @@ export function ProposalModal({
         <div className="flex-1 overflow-y-auto overscroll-contain p-5 sm:p-7">
           {isSent ? (
             <div className="py-6 sm:py-8 text-center max-w-md mx-auto">
-              <div className="mx-auto inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#0F2942] text-[#C59B27] mb-5">
-                <CheckCircle2 className="w-8 h-8" aria-hidden="true" />
+              <div className="mx-auto inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#15803D] text-[#FAF8F5] mb-5">
+                <MessageCircle className="w-8 h-8" aria-hidden="true" />
               </div>
 
               <h3 className="font-display text-2xl sm:text-3xl font-semibold text-[#1A1A1A] mb-2">
                 {t.leadForm.modalTitle}
               </h3>
 
-              <p className="text-base font-medium text-[#0F2942] leading-relaxed mb-7">
+              <p className="text-sm sm:text-base font-medium text-[#0F2942] leading-relaxed mb-6">
                 {t.leadForm.modalDesc}
               </p>
 
-              <button
-                type="button"
-                onClick={onClose}
-                className="w-full min-h-[48px] inline-flex items-center justify-center px-6 py-3 text-sm font-semibold bg-[#C59B27] text-[#1A1A1A] hover:bg-[#D4AA36] rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F2942]"
-              >
-                {t.leadForm.modalClose}
-              </button>
+              <div className="space-y-3">
+                {sentWhatsappUrl && (
+                  <a
+                    href={sentWhatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full min-h-[50px] inline-flex items-center justify-center gap-2 px-6 py-3.5 text-sm font-semibold bg-[#16A34A] text-white hover:bg-[#15803D] rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F2942]"
+                  >
+                    <MessageCircle className="w-4 h-4 shrink-0" aria-hidden="true" />
+                    {t.leadForm.openWhatsappBtn}
+                  </a>
+                )}
+
+                {sentWhatsappText && (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(sentWhatsappText);
+                        setCopiedMsg(true);
+                        setTimeout(() => setCopiedMsg(false), 2500);
+                      } catch {
+                        // ignore clipboard failures
+                      }
+                    }}
+                    className="w-full min-h-[44px] inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-semibold bg-[#EAE5DC] text-[#0F2942] hover:bg-[#DFD7CA] rounded-md transition-colors"
+                  >
+                    {copiedMsg ? (
+                      <>
+                        <Check className="w-4 h-4 text-[#15803D] shrink-0" aria-hidden="true" />
+                        {t.leadForm.copiedMessageBtn}
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4 shrink-0" aria-hidden="true" />
+                        {t.leadForm.copyMessageBtn}
+                      </>
+                    )}
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="w-full min-h-[44px] inline-flex items-center justify-center px-6 py-2.5 text-xs sm:text-sm font-semibold bg-[#C59B27] text-[#1A1A1A] hover:bg-[#D4AA36] rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F2942]"
+                >
+                  {t.leadForm.modalClose}
+                </button>
+              </div>
             </div>
           ) : step === 'valores' ? (
             <div className="space-y-5">

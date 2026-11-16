@@ -232,6 +232,9 @@ export interface SiteTranslations {
     errorConnection: string;
     modalTitle: string;
     modalDesc: string;
+    openWhatsappBtn: string;
+    copyMessageBtn: string;
+    copiedMessageBtn: string;
     modalClose: string;
     modalCloseAria: string;
     defaultSubject: string;
@@ -779,9 +782,9 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       intro:
         'Negocie diretamente com o proprietário com total sigilo e sem intermediação. Preencha seus dados ao lado para encaminhar sua proposta ou solicitar visita reservada em Guaratuba.',
       bullets: [
-        'Atendimento com hora marcada, discrição total e retorno em até 24 horas pelo canal informado por você.',
+        'Atendimento com hora marcada, discrição total e conversa direta pelo WhatsApp oficial do proprietário.',
         'Flexibilidade para visitas presenciais em Guaratuba ou apresentação por videoconferência ao vivo.',
-        'Envio direto pelo formulário seguro da página, sem abrir aplicativos externos.',
+        'Sua proposta e seus dados são encaminhados diretamente para o WhatsApp do proprietário.',
       ],
       attachedProposal: 'Proposta:',
       attachedDown: 'Entrada',
@@ -808,8 +811,8 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       notesLabel: 'Proposta, preferência de horário ou observação (opcional)',
       notesPlaceholder:
         'Escreva sua proposta, condições de pagamento ou melhor horário para retorno',
-      submitButton: 'Enviar Proposta e Mensagem',
-      submittingButton: 'Enviando...',
+      submitButton: 'Enviar Proposta pelo WhatsApp',
+      submittingButton: 'Preparando WhatsApp...',
       requiredNote: '* Nome, e-mail, telefone, cidade e estado são obrigatórios',
       warningStrong: 'Aviso:',
       warningText:
@@ -820,20 +823,25 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       errorCity: 'Informe sua cidade para enviar a mensagem.',
       errorState: 'Informe seu estado (UF) para enviar a mensagem.',
       errorServerFallback:
-        'Não foi possível enviar sua mensagem. Verifique nome, e-mail e telefone e tente novamente.',
-      errorConnection: 'Erro de conexão ao enviar sua mensagem. Tente novamente em instantes.',
-      modalTitle: 'Mensagem enviada com sucesso.',
-      modalDesc: 'Dentro de 24h entraremos em contato.',
+        'Não foi possível validar sua proposta. Verifique os campos obrigatórios e tente novamente.',
+      errorConnection: 'Erro de conexão ao preparar sua proposta. Tente novamente em instantes.',
+      modalTitle: 'Proposta pronta para enviar no WhatsApp.',
+      modalDesc:
+        'Toque no botão abaixo para abrir a conversa no WhatsApp com todos os dados preenchidos direto para o proprietário.',
+      openWhatsappBtn: 'Abrir conversa no WhatsApp',
+      copyMessageBtn: 'Copiar mensagem',
+      copiedMessageBtn: 'Mensagem copiada!',
       modalClose: 'Fechar',
       modalCloseAria: 'Fechar janela de confirmação',
       defaultSubject: 'Proposta / Agendamento de Visita',
       openFormCta: 'Faça sua proposta e envie',
-      openFormSubnote: 'Abre em tela limpa e fixa · Sem rolagem indesejada',
+      openFormSubnote: 'Envio direto pelo WhatsApp · Atendimento privativo',
       cardEyebrow: 'Canal Direto · Sem Intermediários',
       cardTitle: 'Envie valores e agende seu atendimento em 2 passos',
       cardStep1:
         '1. Defina o valor da proposta e se será à vista, parcelado ou negociar direto com o proprietário',
-      cardStep2: '2. Preencha seu nome, e-mail e WhatsApp e envie direto ao proprietário',
+      cardStep2:
+        '2. Preencha seu nome, e-mail, WhatsApp, cidade e estado e envie direto para o WhatsApp do proprietário',
     },
     proposalModal: {
       dialogTitle: 'Faça sua Proposta',
@@ -1427,9 +1435,9 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       intro:
         'Negocie directamente con el propietario con total confidencialidad y sin intermediarios. Complete sus datos para enviar su propuesta o solicitar una visita privada en Guaratuba.',
       bullets: [
-        'Atención con cita previa, máxima discreción y respuesta en menos de 24 horas por el canal indicado.',
+        'Atención con cita previa, máxima discreción y contacto directo por el WhatsApp oficial del propietario.',
         'Flexibilidad para visitas presenciales en Guaratuba o presentación por videoconferencia en vivo.',
-        'Envío directo mediante el formulario seguro de esta página, sin aplicaciones externas.',
+        'Su propuesta y sus datos se envían directamente al WhatsApp del propietario.',
       ],
       attachedProposal: 'Propuesta:',
       attachedDown: 'Entrada',
@@ -1456,8 +1464,8 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       notesLabel: 'Propuesta, horario preferido o comentario (opcional)',
       notesPlaceholder:
         'Indique su propuesta en USD o BRL, condiciones de pago u horario ideal de contacto',
-      submitButton: 'Enviar Propuesta y Mensaje',
-      submittingButton: 'Enviando...',
+      submitButton: 'Enviar Propuesta por WhatsApp',
+      submittingButton: 'Preparando WhatsApp...',
       requiredNote: '* Nombre, correo, teléfono, ciudad y estado son obligatorios',
       warningStrong: 'Aviso:',
       warningText:
@@ -1468,20 +1476,25 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       errorCity: 'Ingrese su ciudad para enviar el mensaje.',
       errorState: 'Ingrese su estado o provincia para enviar el mensaje.',
       errorServerFallback:
-        'No fue posible enviar su mensaje. Verifique nombre, correo y teléfono e intente nuevamente.',
-      errorConnection: 'Error de conexión al enviar su mensaje. Inténtelo nuevamente en unos instantes.',
-      modalTitle: 'Mensaje enviado con éxito.',
-      modalDesc: 'Dentro de 24h nos pondremos en contacto.',
+        'No fue posible validar su propuesta. Verifique los campos obligatorios e intente nuevamente.',
+      errorConnection: 'Error de conexión al preparar su propuesta. Inténtelo nuevamente en unos instantes.',
+      modalTitle: 'Propuesta lista para enviar por WhatsApp.',
+      modalDesc:
+        'Toque el botón de abajo para abrir el chat de WhatsApp con todos los datos listos directo para el propietario.',
+      openWhatsappBtn: 'Abrir chat en WhatsApp',
+      copyMessageBtn: 'Copiar mensaje',
+      copiedMessageBtn: '¡Mensaje copiado!',
       modalClose: 'Cerrar',
       modalCloseAria: 'Cerrar ventana de confirmación',
       defaultSubject: 'Propuesta / Agendamiento de Visita',
       openFormCta: 'Haz tu propuesta y envía',
-      openFormSubnote: 'Ventana fija y limpia · Sin saltos al escribir',
+      openFormSubnote: 'Envío directo por WhatsApp · Atención privada',
       cardEyebrow: 'Canal Directo · Sin Intermediarios',
       cardTitle: 'Envíe su propuesta y agende atención en 2 pasos',
       cardStep1:
         '1. Defina el valor de su oferta y si es al contado, financiado o negociar directo con el propietario',
-      cardStep2: '2. Complete su nombre, correo y WhatsApp y envíe directo al propietario',
+      cardStep2:
+        '2. Complete nombre, correo, WhatsApp, ciudad y estado y envíe directo al WhatsApp del propietario',
     },
     proposalModal: {
       dialogTitle: 'Haz tu Propuesta',
@@ -2075,9 +2088,9 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       intro:
         'Negotiate directly with the owner in strict confidence with zero brokerage intermediaries. Complete the form to submit your offer or book a private tour in Guaratuba.',
       bullets: [
-        'By-appointment private service with complete discretion and response within 24 hours via your preferred channel.',
+        'By-appointment private service with complete discretion via the owner’s official WhatsApp.',
         'Flexible scheduling for in-person tours in Guaratuba or live private video walkthroughs.',
-        'Direct encrypted submission through this page with no external redirects.',
+        'Your offer and details go straight to the owner’s WhatsApp with zero intermediaries.',
       ],
       attachedProposal: 'Offer:',
       attachedDown: 'Down payment',
@@ -2104,8 +2117,8 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       notesLabel: 'Offer details, preferred time, or notes (optional)',
       notesPlaceholder:
         'Share your offer in USD or BRL, payment structure, or preferred time to connect',
-      submitButton: 'Send Offer & Message',
-      submittingButton: 'Sending...',
+      submitButton: 'Send Offer via WhatsApp',
+      submittingButton: 'Preparing WhatsApp...',
       requiredNote: '* Name, email, phone, city, and state are required',
       warningStrong: 'Notice:',
       warningText:
@@ -2116,20 +2129,25 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       errorCity: 'Please enter your city.',
       errorState: 'Please enter your state or province.',
       errorServerFallback:
-        'Unable to send your message. Please verify your name, email, and phone number and try again.',
-      errorConnection: 'Connection error while sending your message. Please try again shortly.',
-      modalTitle: 'Message sent successfully.',
-      modalDesc: 'We will contact you within 24 hours.',
+        'Unable to validate your offer. Please check the required fields and try again.',
+      errorConnection: 'Connection error while preparing your offer. Please try again shortly.',
+      modalTitle: 'Offer ready to send via WhatsApp.',
+      modalDesc:
+        'Tap the button below to open WhatsApp with all details pre-filled straight to the owner.',
+      openWhatsappBtn: 'Open WhatsApp chat',
+      copyMessageBtn: 'Copy message',
+      copiedMessageBtn: 'Message copied!',
       modalClose: 'Close',
       modalCloseAria: 'Close confirmation window',
       defaultSubject: 'Purchase Offer / Private Viewing Request',
       openFormCta: 'Make an Offer & Send',
-      openFormSubnote: 'Opens in a steady, distraction-free view',
+      openFormSubnote: 'Direct WhatsApp dispatch · Private concierge',
       cardEyebrow: 'Direct Line · Zero Intermediaries',
       cardTitle: 'Send your offer & contact info in 2 quick steps',
       cardStep1:
         '1. Set your offer price and cash, installment terms, or negotiate directly with the owner',
-      cardStep2: '2. Enter your name, email & WhatsApp and submit directly to the owner',
+      cardStep2:
+        '2. Enter your name, email, WhatsApp, city & state and send directly to the owner’s WhatsApp',
     },
     proposalModal: {
       dialogTitle: 'Make Your Offer',

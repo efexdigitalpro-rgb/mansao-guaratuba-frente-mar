@@ -5,7 +5,6 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
 import type { Request, Response } from 'express';
-import nodemailer from 'nodemailer';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,10 +12,8 @@ const __dirname = path.dirname(__filename);
 const PORT = Number(process.env.PORT || 3000);
 const IS_PROD = process.env.NODE_ENV === 'production';
 
-// Mantido exclusivamente no servidor — nunca exposto ao cliente
-const DESTINATION_EMAIL = (
-  process.env.PROPOSAL_DESTINATION_EMAIL || 'imoveisgrupolrv@gmail.com'
-).trim();
+const WHATSAPP_NUMBER =
+  (process.env.WHATSAPP_NUMBER || '5548998351959').replace(/\D/g, '') || '5548998351959';
 
 const EMAIL_REGEX =
   /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,24}$/;
@@ -426,7 +423,7 @@ interface ProposalRecord {
   visitType: string;
   notes: string;
   simulation: SimulationPayload | null;
-  deliveryChannel: string;
+  deliveryChannel: 'whatsapp';
 }
 
 const formatBRL = (value: number): string =>
@@ -435,14 +432,6 @@ const formatBRL = (value: number): string =>
     currency: 'BRL',
     maximumFractionDigits: 0,
   }).format(Math.round(value));
-
-const escapeHtml = (input: string): string =>
-  input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
 
 async function persistProposal(record: ProposalRecord): Promise<void> {
   try {
@@ -464,11 +453,7 @@ async function persistProposal(record: ProposalRecord): Promise<void> {
   }
 }
 
-function buildEmailContent(record: ProposalRecord): {
-  subject: string;
-  text: string;
-  html: string;
-} {
+function buildWhatsappMessage(record: ProposalRecord): string {
   const createdBr = `${new Date(record.createdAt).toLocaleString('pt-BR', {
     timeZone: 'America/Sao_Paulo',
     day: '2-digit',
@@ -478,345 +463,50 @@ function buildEmailContent(record: ProposalRecord): {
     minute: '2-digit',
   })} (Horário de Brasília)`;
 
-  const subjectLine = `[Mansão Guaratuba] ${record.subject} — ${record.name}`;
-
-  const lines: string[] = [
-    'NOVA PROPOSTA / CONTATO RECEBIDO PELO SITE',
-    '==========================================',
-    `Assunto: ${record.subject}`,
-    `Recebido em: ${createdBr}`,
-    '',
-    'DADOS DO INTERESSADO:',
-    `• Nome: ${record.name}`,
-    `• E-mail: ${record.email}`,
-    `• Telefone: ${record.phone}`,
-    record.city || record.state ? `• Cidade / Estado: ${record.city} - ${record.state}` : '',
-  ].filter(Boolean);
-
-  if (record.visitDate || record.visitType) {
-    lines.push('');
-    lines.push('ATENDIMENTO / VISITA:');
-    if (record.visitType) lines.push(`• Modalidade: ${record.visitType}`);
-    if (record.visitDate) lines.push(`• Data preferencial: ${record.visitDate}`);
-  }
-
+  const simulationLines: string[] = [];
   if (record.simulation) {
     const s = record.simulation;
-    lines.push('');
-    lines.push('PROPOSTA SIMULADA:');
-    lines.push(`• Preço anunciado: ${formatBRL(s.listedPrice)}`);
-    lines.push(`• Valor da proposta: ${formatBRL(s.proposalValue)}`);
-    lines.push(`• Entrada (${s.downPaymentPercent}%): ${formatBRL(s.downPaymentValue)}`);
-    lines.push(`• Saldo a financiar: ${formatBRL(s.financedAmount)}`);
-    lines.push(`• Prazo: ${s.termMonths} meses`);
-    lines.push(`• Taxa efetiva anual: ${s.annualRate}% a.a.`);
-    lines.push(
-      `• SAC: 1ª parcela ${formatBRL(s.sacFirstInstallment)} | última ${formatBRL(s.sacLastInstallment)} | total ${formatBRL(s.sacTotalPaid)}`
-    );
-    lines.push(
-      `• Price: parcela fixa ${formatBRL(s.priceInstallment)} | total ${formatBRL(s.priceTotalPaid)}`
-    );
-  }
-
-  if (record.notes) {
-    lines.push('');
-    lines.push('OBSERVAÇÕES:');
-    lines.push(record.notes);
-  }
-
-  const simHtml = record.simulation
-    ? `
-      <h3 style="color:#0F2942;margin:20px 0 8px;">Proposta Simulada</h3>
-      <table style="width:100%;border-collapse:collapse;font-size:14px;">
-        <tr><td style="padding:6px 0;color:#555;">Preço anunciado</td><td style="padding:6px 0;text-align:right;font-weight:600;">${escapeHtml(formatBRL(record.simulation.listedPrice))}</td></tr>
-        <tr><td style="padding:6px 0;color:#555;">Valor da proposta</td><td style="padding:6px 0;text-align:right;font-weight:700;color:#0F2942;">${escapeHtml(formatBRL(record.simulation.proposalValue))}</td></tr>
-        <tr><td style="padding:6px 0;color:#555;">Entrada (${escapeHtml(String(record.simulation.downPaymentPercent))}%)</td><td style="padding:6px 0;text-align:right;font-weight:600;">${escapeHtml(formatBRL(record.simulation.downPaymentValue))}</td></tr>
-        <tr><td style="padding:6px 0;color:#555;">Saldo a financiar</td><td style="padding:6px 0;text-align:right;font-weight:600;">${escapeHtml(formatBRL(record.simulation.financedAmount))}</td></tr>
-        <tr><td style="padding:6px 0;color:#555;">Prazo / Taxa anual</td><td style="padding:6px 0;text-align:right;font-weight:600;">${escapeHtml(String(record.simulation.termMonths))} meses · ${escapeHtml(String(record.simulation.annualRate))}% a.a.</td></tr>
-        <tr><td style="padding:6px 0;color:#555;">SAC (1ª / última / total)</td><td style="padding:6px 0;text-align:right;">${escapeHtml(formatBRL(record.simulation.sacFirstInstallment))} / ${escapeHtml(formatBRL(record.simulation.sacLastInstallment))} / ${escapeHtml(formatBRL(record.simulation.sacTotalPaid))}</td></tr>
-        <tr><td style="padding:6px 0;color:#555;">Price (parcela fixa / total)</td><td style="padding:6px 0;text-align:right;">${escapeHtml(formatBRL(record.simulation.priceInstallment))} / ${escapeHtml(formatBRL(record.simulation.priceTotalPaid))}</td></tr>
-      </table>
-    `
-    : '';
-
-  const html = `
-    <div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:0 auto;padding:24px;background:#FAF8F5;color:#1A1A1A;border:1px solid #DFD7CA;border-radius:8px;">
-      <p style="margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#C59B27;font-weight:700;">Mansão Frente ao Mar · Guaratuba</p>
-      <h2 style="margin:0 0 16px;color:#0F2942;">${escapeHtml(record.subject)}</h2>
-      <p style="margin:0 0 16px;font-size:13px;color:#6B645B;">Recebido em ${escapeHtml(createdBr)}</p>
-
-      <div style="background:#FFFFFF;padding:16px;border-radius:6px;border:1px solid #EAE2D6;">
-        <p style="margin:0 0 8px;"><strong>Nome:</strong> ${escapeHtml(record.name)}</p>
-        <p style="margin:0 0 8px;"><strong>E-mail:</strong> ${escapeHtml(record.email)}</p>
-        <p style="margin:0 0 8px;"><strong>Telefone:</strong> ${escapeHtml(record.phone)}</p>
-        ${record.city || record.state ? `<p style="margin:0 0 8px;"><strong>Cidade / Estado:</strong> ${escapeHtml(record.city)} - ${escapeHtml(record.state)}</p>` : ''}
-        ${record.visitType ? `<p style="margin:0 0 8px;"><strong>Modalidade:</strong> ${escapeHtml(record.visitType)}</p>` : ''}
-        ${record.visitDate ? `<p style="margin:0 0 8px;"><strong>Data preferencial:</strong> ${escapeHtml(record.visitDate)}</p>` : ''}
-        ${record.notes ? `<p style="margin:8px 0 0;"><strong>Observações:</strong><br/>${escapeHtml(record.notes).replace(/\n/g, '<br/>')}</p>` : ''}
-      </div>
-
-      ${simHtml}
-    </div>
-  `;
-
-  return {
-    subject: subjectLine,
-    text: lines.join('\n'),
-    html,
-  };
-}
-
-async function dispatchEmail(record: ProposalRecord): Promise<string> {
-  const { subject, text, html } = buildEmailContent(record);
-  const createdBr = `${new Date(record.createdAt).toLocaleString('pt-BR', {
-    timeZone: 'America/Sao_Paulo',
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })} (Horário de Brasília)`;
-
-  // 1. Resend API (HTTPS — ~0.1s)
-  const resendKey = process.env.RESEND_API_KEY?.trim();
-  if (resendKey) {
-    try {
-      const from = process.env.RESEND_FROM?.trim() || 'Mansão Guaratuba <onboarding@resend.dev>';
-      const res = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${resendKey}`,
-          'Content-Type': 'application/json',
-        },
-        signal: AbortSignal.timeout(4500),
-        body: JSON.stringify({
-          from,
-          to: [DESTINATION_EMAIL],
-          reply_to: record.email,
-          subject,
-          text,
-          html,
-        }),
-      });
-      if (res.ok) {
-        return 'resend';
-      }
-      const errBody = await res.text();
-      console.error('[proposta] Erro no envio via Resend:', res.status, errBody);
-    } catch (err) {
-      console.error('[proposta] Exceção no envio via Resend:', err);
+    simulationLines.push(`• Valor anunciado: ${formatBRL(s.listedPrice)}`);
+    simulationLines.push(`• Valor da proposta: ${formatBRL(s.proposalValue)}`);
+    if (s.financedAmount <= 0) {
+      simulationLines.push('• Forma de pagamento: À vista (100%)');
+    } else {
+      simulationLines.push(`• Entrada (${s.downPaymentPercent}%): ${formatBRL(s.downPaymentValue)}`);
+      simulationLines.push(`• Saldo a financiar: ${formatBRL(s.financedAmount)}`);
+      simulationLines.push(`• Prazo / Taxa: ${s.termMonths} meses · ${s.annualRate}% a.a.`);
+      simulationLines.push(
+        `• SAC: 1ª ${formatBRL(s.sacFirstInstallment)} | última ${formatBRL(s.sacLastInstallment)}`
+      );
+      simulationLines.push(`• Price: parcela fixa ${formatBRL(s.priceInstallment)}`);
     }
+  } else {
+    simulationLines.push('• Condição: A negociar diretamente com o proprietário');
   }
 
-  // 2. SMTP / Gmail via Nodemailer
-  const smtpPass = (process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD || '').trim();
-  if (smtpPass) {
-    try {
-      const smtpHost = (process.env.SMTP_HOST || 'smtp.gmail.com').trim();
-      const smtpPort = Number(process.env.SMTP_PORT || 465);
-      const smtpUser = (
-        process.env.SMTP_USER ||
-        process.env.GMAIL_USER ||
-        DESTINATION_EMAIL
-      ).trim();
-      const smtpFrom = (process.env.SMTP_FROM || `Mansão Guaratuba <${smtpUser}>`).trim();
-
-      const transporter = nodemailer.createTransport({
-        host: smtpHost,
-        port: smtpPort,
-        secure: smtpPort === 465,
-        connectionTimeout: 4000,
-        greetingTimeout: 4000,
-        socketTimeout: 5000,
-        auth: {
-          user: smtpUser,
-          pass: smtpPass,
-        },
-      });
-
-      await transporter.sendMail({
-        from: smtpFrom,
-        to: DESTINATION_EMAIL,
-        replyTo: record.email,
-        subject,
-        text,
-        html,
-      });
-      return 'smtp';
-    } catch (err) {
-      console.error('[proposta] Erro no envio via SMTP:', err);
-    }
-  }
-
-  const simulationSummary = record.simulation
-    ? [
-        `Preço anunciado: ${formatBRL(record.simulation.listedPrice)}`,
-        `Valor da proposta: ${formatBRL(record.simulation.proposalValue)}`,
-        `Entrada (${record.simulation.downPaymentPercent}%): ${formatBRL(record.simulation.downPaymentValue)}`,
-        `Saldo a financiar: ${formatBRL(record.simulation.financedAmount)}`,
-        `Prazo: ${record.simulation.termMonths} meses`,
-        `Taxa anual: ${record.simulation.annualRate}% a.a.`,
-        `SAC: 1ª ${formatBRL(record.simulation.sacFirstInstallment)} | última ${formatBRL(record.simulation.sacLastInstallment)} | total ${formatBRL(record.simulation.sacTotalPaid)}`,
-        `Price: parcela ${formatBRL(record.simulation.priceInstallment)} | total ${formatBRL(record.simulation.priceTotalPaid)}`,
-      ].join(' | ')
-    : '';
-
-  // 3. Web3Forms API (HTTPS — ~0.15s)
-  const web3FormsKey = process.env.WEB3FORMS_ACCESS_KEY?.trim();
-  if (web3FormsKey) {
-    try {
-      const r = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        signal: AbortSignal.timeout(4500),
-        body: JSON.stringify({
-          access_key: web3FormsKey,
-          subject,
-          from_name: 'Mansão Guaratuba',
-          name: record.name,
-          email: record.email,
-          replyto: record.email,
-          Telefone: record.phone,
-          Cidade: record.city,
-          Estado: record.state,
-          Assunto: record.subject,
-          Horario_Brasilia: createdBr,
-          Modalidade: record.visitType || '-',
-          Data_Preferencial: record.visitDate || '-',
-          Proposta_Simulada: simulationSummary || '-',
-          Observacoes: record.notes || '-',
-        }),
-      });
-      const data = (await r.json().catch(() => null)) as { success?: boolean } | null;
-      if (r.ok && data?.success) {
-        return 'web3forms';
-      }
-      console.error('[proposta] Erro no envio via Web3Forms:', r.status, data);
-    } catch (err) {
-      console.error('[proposta] Exceção no envio via Web3Forms:', err);
-    }
-  }
-
-  // 4. Formspree endpoint
-  const formspreeEndpoint = process.env.FORMSPREE_ENDPOINT?.trim();
-  if (formspreeEndpoint) {
-    try {
-      const r = await fetch(formspreeEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        signal: AbortSignal.timeout(4500),
-        body: JSON.stringify({
-          name: record.name,
-          email: record.email,
-          _replyto: record.email,
-          _subject: subject,
-          Telefone: record.phone,
-          Cidade: record.city,
-          Estado: record.state,
-          Assunto: record.subject,
-          Horario_Brasilia: createdBr,
-          Modalidade: record.visitType,
-          Data_Preferencial: record.visitDate,
-          Proposta_Simulada: simulationSummary,
-          Observacoes: record.notes,
-        }),
-      });
-      if (r.ok) {
-        return 'formspree';
-      }
-      console.error('[proposta] Erro no envio via Formspree:', r.status);
-    } catch (err) {
-      console.error('[proposta] Exceção no envio via Formspree:', err);
-    }
-  }
-
-  // 5. Webhook HTTP
-  const webhookUrl = process.env.EMAIL_WEBHOOK_URL?.trim();
-  if (webhookUrl) {
-    try {
-      const res = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        signal: AbortSignal.timeout(4500),
-        body: JSON.stringify({
-          to: DESTINATION_EMAIL,
-          replyTo: record.email,
-          subject,
-          text,
-          html,
-          lead: record,
-        }),
-      });
-      if (res.ok) {
-        return 'webhook';
-      }
-      console.error('[proposta] Erro no envio via webhook:', res.status);
-    } catch (err) {
-      console.error('[proposta] Exceção no envio via webhook:', err);
-    }
-  }
-
-  // 6. FormSubmit server-side com timeout estrito (nunca trava o endpoint)
-  try {
-    const formSubmitTarget = encodeURIComponent(
-      (process.env.FORMSUBMIT_TOKEN || DESTINATION_EMAIL).trim()
-    );
-    const originHeader = 'https://mansao-guaratuba-frente-mar.vercel.app';
-    const refererHeader = 'https://mansao-guaratuba-frente-mar.vercel.app/';
-
-    const payload: Record<string, string> = {
-      name: record.name,
-      email: record.email,
-      Telefone: record.phone,
-      Cidade: record.city,
-      Estado: record.state,
-      Assunto: record.subject,
-      Horario_Brasilia: createdBr,
-      _subject: subject,
-      _replyto: record.email,
-      _template: 'table',
-      _captcha: 'false',
-    };
-
-    if (record.visitType) payload.Modalidade = record.visitType;
-    if (record.visitDate) payload.Data_Preferencial = record.visitDate;
-    if (simulationSummary) payload.Proposta_Simulada = simulationSummary;
-    if (record.notes) payload.Observacoes = record.notes;
-
-    const res = await fetch(`https://formsubmit.co/ajax/${formSubmitTarget}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        Origin: originHeader,
-        Referer: refererHeader,
-        'User-Agent': 'MansaoGuaratubaServer/1.0',
-      },
-      signal: AbortSignal.timeout(8000),
-      body: JSON.stringify(payload),
-    });
-
-    const data = (await res.json().catch(() => null)) as {
-      success?: string | boolean;
-      message?: string;
-    } | null;
-
-    if (res.ok && (data?.success === 'true' || data?.success === true)) {
-      return 'formsubmit';
-    }
-
-    console.warn('[proposta] Resposta FormSubmit:', res.status, data);
-  } catch (err) {
-    console.error('[proposta] Timeout/Exceção no envio via FormSubmit:', err);
-  }
-
-  return 'failed';
+  return [
+    '*NOVA PROPOSTA — MANSÃO GUARATUBA*',
+    `Assunto: ${record.subject}`,
+    `Horário: ${createdBr}`,
+    '',
+    '*Dados do Interessado:*',
+    `• Nome: ${record.name}`,
+    `• E-mail: ${record.email}`,
+    `• Telefone / WhatsApp: ${record.phone}`,
+    `• Cidade / Estado: ${record.city} - ${record.state}`,
+    '',
+    '*Atendimento:*',
+    record.visitType ? `• Modalidade: ${record.visitType}` : '',
+    record.visitDate ? `• Data preferencial: ${record.visitDate}` : '',
+    '',
+    '*Proposta / Condições:*',
+    ...simulationLines,
+    record.notes ? `\n*Observações:*\n${record.notes}` : '',
+  ]
+    .filter((line, idx, arr) => {
+      if (line !== '') return true;
+      return idx > 0 && arr[idx - 1] !== '';
+    })
+    .join('\n');
 }
 
 async function startServer() {
@@ -841,8 +531,7 @@ async function startServer() {
     const name = typeof body.name === 'string' ? body.name.trim() : '';
     const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
     const phone = typeof body.phone === 'string' ? body.phone.trim() : '';
-    const lang =
-      body.lang === 'es' || body.lang === 'en' ? body.lang : 'pt';
+    const lang = body.lang === 'es' || body.lang === 'en' ? body.lang : 'pt';
 
     if (name.length < 3) {
       res.status(400).json({
@@ -945,31 +634,22 @@ async function startServer() {
       visitType,
       notes,
       simulation,
-      deliveryChannel: 'pending',
+      deliveryChannel: 'whatsapp',
     };
 
-    record.deliveryChannel = await dispatchEmail(record);
     await persistProposal(record);
 
-    if (record.deliveryChannel === 'failed') {
-      res.status(503).json({
-        ok: false,
-        code: 'EMAIL_DELIVERY_UNAVAILABLE',
-        error:
-          lang === 'es'
-            ? 'El servicio de envío de correo no está disponible temporalmente. Por favor, intente nuevamente en unos instantes.'
-            : lang === 'en'
-              ? 'The email delivery service is temporarily unavailable. Please try again shortly.'
-              : 'O serviço de envio de e-mail está temporariamente indisponível. Por favor, tente novamente em alguns instantes.',
-      });
-      return;
-    }
+    const whatsappMessage = buildWhatsappMessage(record);
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+      whatsappMessage
+    )}`;
 
-    // Resposta limpa sem jamais revelar o e-mail de destino
     res.status(200).json({
       ok: true,
-      channel: record.deliveryChannel,
-      message: 'Mensagem enviada com sucesso. Dentro de 24h entraremos em contato.',
+      channel: 'whatsapp',
+      whatsappUrl,
+      whatsappMessage,
+      message: 'Proposta validada para envio direto pelo WhatsApp.',
     });
   });
 
