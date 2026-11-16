@@ -20,6 +20,10 @@ import {
 } from '../utils/phoneValidation';
 import { validateEmailByLanguage } from '../utils/emailValidation';
 import { handleLiveGroupedDigitsChange } from '../utils/currencyInput';
+import {
+  buildWhatsappDirectUrl,
+  buildWhatsappProposalMessage,
+} from '../utils/whatsappMessage';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const LISTED_PRICE = BROKER_CONFIG.referenceValue;
@@ -78,7 +82,9 @@ export function ProposalModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sentWhatsappUrl, setSentWhatsappUrl] = useState('');
   const [sentWhatsappText, setSentWhatsappText] = useState('');
+  const [autoSent, setAutoSent] = useState(false);
   const [copiedMsg, setCopiedMsg] = useState(false);
+  const [dnsEmailError, setDnsEmailError] = useState<{ email: string; error: string } | null>(null);
 
   const todayIso = new Date().toISOString().split('T')[0];
 
@@ -86,6 +92,7 @@ export function ProposalModal({
   useEffect(() => {
     if (!isOpen) return;
     setIsSent(false);
+    setAutoSent(false);
     setErrorMsg('');
     setProposalDraft(null);
     setPctDraft(null);
@@ -215,12 +222,47 @@ export function ProposalModal({
     };
   }, [paymentMode, proposalValue, downPaymentPercent, termMonths, ratePercent]);
 
-  const emailTrimmed = email.trim();
-  const emailCheck = validateEmailByLanguage(email, language);
+  const emailTrimmed = email.trim().toLowerCase();
+  const baseEmailCheck = validateEmailByLanguage(email, language);
+  const matchingDnsError =
+    dnsEmailError && dnsEmailError.email === emailTrimmed ? dnsEmailError.error : '';
+  const emailCheck =
+    baseEmailCheck.valid && matchingDnsError
+      ? { valid: false, error: matchingDnsError }
+      : baseEmailCheck;
   const emailDomainPart = emailTrimmed.split('@')[1] || '';
   const showEmailFeedback =
     emailTrimmed.length > 0 &&
     (emailTouched || (emailTrimmed.includes('@') && /\.[a-z]{2,}$/i.test(emailDomainPart)));
+
+  // Pré-validação DNS silenciosa ao sair do campo para domínios personalizados
+  const verifyEmailDomainDns = async (targetEmail: string) => {
+    const normalized = targetEmail.trim().toLowerCase();
+    if (!normalized || !validateEmailByLanguage(normalized, language).valid) return;
+    try {
+      const res = await fetch(
+        `/api/proposta?email=${encodeURIComponent(normalized)}&lang=${encodeURIComponent(language)}`
+      );
+      if (!res.ok) return;
+      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+      if (data.ok === false && data.error) {
+        setDnsEmailError({ email: normalized, error: data.error });
+      } else {
+        setDnsEmailError((prev) => (prev?.email === normalized ? null : prev));
+      }
+    } catch {
+      // ignora erro de rede na pré-checagem
+    }
+  };
+
+  useEffect(() => {
+    if (!isOpen || !baseEmailCheck.valid || !emailTrimmed) return;
+    const timer = window.setTimeout(() => {
+      void verifyEmailDomainDns(emailTrimmed);
+    }, 350);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [emailTrimmed, baseEmailCheck.valid, language, isOpen]);
 
   const phoneDigitsCount = phone.replace(/\D/g, '').length;
   const phoneCheck = validatePhoneByLanguage(phone, language);
@@ -252,6 +294,8 @@ export function ProposalModal({
     const cleanCity = city.trim();
     const cleanState = stateRegion.trim();
     const emailValidation = validateEmailByLanguage(cleanEmail, language);
+    const activeDnsErr =
+      dnsEmailError && dnsEmailError.email === cleanEmail ? dnsEmailError.error : '';
     const phoneValidation = validatePhoneByLanguage(cleanPhone, language);
 
     if (cleanName.length < 3) {
@@ -259,9 +303,9 @@ export function ProposalModal({
       document.getElementById('modal-lead-name')?.focus();
       return;
     }
-    if (!emailValidation.valid) {
+    if (!emailValidation.valid || activeDnsErr) {
       setEmailTouched(true);
-      setErrorMsg(emailValidation.error || t.leadForm.errorEmail);
+      setErrorMsg(activeDnsErr || emailValidation.error || t.leadForm.errorEmail);
       document.getElementById('modal-lead-email')?.focus();
       return;
     }
@@ -295,10 +339,41 @@ export function ProposalModal({
           ? t.proposalModal.cashSubject
           : t.appContexts.simulationSubject);
 
+    const instantWhatsappText = buildWhatsappProposalMessage({
+      name: cleanName,
+      email: cleanEmail,
+      phone: cleanPhone,
+      city: cleanCity,
+      state: cleanState,
+      subject: computedSubject,
+      visitDate,
+      visitType: visitTypeLabel,
+      notes: notes.trim(),
+      simulation: isNegotiate ? null : computedSimulation,
+    });
+    const instantWhatsappUrl = buildWhatsappDirectUrl(instantWhatsappText);
+
+    // Abre o WhatsApp SINCRONAMENTE no mesmo clique (sem esperar fetch assíncrono)
+    // para não perder a permissão de navegação do navegador nem depender de clique extra.
+    const anchor = document.createElement('a');
+    anchor.href = instantWhatsappUrl;
+    anchor.target = '_blank';
+    anchor.rel = 'noopener noreferrer';
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+
+    setSentWhatsappUrl(instantWhatsappUrl);
+    setSentWhatsappText(instantWhatsappText);
+    setAutoSent(false);
+    setCopiedMsg(false);
+    setIsSent(true);
+
     setIsSubmitting(true);
     try {
       const response = await fetch('/api/proposta', {
         method: 'POST',
+        keepalive: true,
         headers: { 'Content-Type': 'application/json' },
         signal:
           typeof AbortSignal !== 'undefined' && 'timeout' in AbortSignal
@@ -321,28 +396,28 @@ export function ProposalModal({
 
       const data = (await response.json().catch(() => ({}))) as {
         ok?: boolean;
+        autoSent?: boolean;
         error?: string;
         whatsappUrl?: string;
         whatsappMessage?: string;
       };
 
-      if (!response.ok || !data.ok || !data.whatsappUrl) {
-        const fallbackMsg =
-          response.status >= 500
-            ? t.leadForm.errorConnection
-            : t.leadForm.errorServerFallback;
-        setErrorMsg(data.error || fallbackMsg);
+      if (!response.ok || !data.ok) {
+        if (response.status === 400 && data.error) {
+          setIsSent(false);
+          setErrorMsg(data.error);
+        }
         return;
       }
 
-      const targetWhatsappUrl = data.whatsappUrl;
-      setSentWhatsappUrl(targetWhatsappUrl);
-      setSentWhatsappText(data.whatsappMessage || '');
-      setCopiedMsg(false);
+      if (data.whatsappUrl) setSentWhatsappUrl(data.whatsappUrl);
+      if (data.whatsappMessage) setSentWhatsappText(data.whatsappMessage);
+      if (data.autoSent) setAutoSent(true);
 
       setName('');
       setEmail('');
       setEmailTouched(false);
+      setDnsEmailError(null);
       setPhone('');
       setPhoneTouched(false);
       setCity('');
@@ -352,18 +427,8 @@ export function ProposalModal({
       setVisitDate('');
       setNotes('');
       onClearContext();
-      setIsSent(true);
-
-      // Dispara abertura direta da conversa no WhatsApp sem window.open
-      const anchor = document.createElement('a');
-      anchor.href = targetWhatsappUrl;
-      anchor.target = '_blank';
-      anchor.rel = 'noopener noreferrer';
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
     } catch {
-      setErrorMsg(t.leadForm.errorConnection);
+      // Conversa do WhatsApp já foi aberta com sucesso no clique do usuário
     } finally {
       setIsSubmitting(false);
     }
@@ -466,11 +531,11 @@ export function ProposalModal({
               </div>
 
               <h3 className="font-display text-2xl sm:text-3xl font-semibold text-[#1A1A1A] mb-2">
-                {t.leadForm.modalTitle}
+                {autoSent ? t.leadForm.autoSentTitle : t.leadForm.modalTitle}
               </h3>
 
               <p className="text-sm sm:text-base font-medium text-[#0F2942] leading-relaxed mb-6">
-                {t.leadForm.modalDesc}
+                {autoSent ? t.leadForm.autoSentDesc : t.leadForm.modalDesc}
               </p>
 
               <div className="space-y-3">
@@ -973,9 +1038,13 @@ export function ProposalModal({
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value);
+                      if (dnsEmailError) setDnsEmailError(null);
                       if (errorMsg) setErrorMsg('');
                     }}
-                    onBlur={() => setEmailTouched(true)}
+                    onBlur={() => {
+                      setEmailTouched(true);
+                      void verifyEmailDomainDns(email);
+                    }}
                     placeholder={t.leadForm.emailPlaceholder}
                     className={`w-full min-h-[48px] px-4 py-2.5 text-base sm:text-sm bg-[#FFFFFF] border rounded-md text-[#1A1A1A] placeholder:text-[#8A8175] focus:outline-none focus:ring-1 ${
                       showEmailFeedback && !emailCheck.valid

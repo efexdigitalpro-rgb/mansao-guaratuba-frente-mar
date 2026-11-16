@@ -317,7 +317,100 @@ function sendJson(res: ServerResponse, statusCode: number, payload: Record<strin
   res.end(JSON.stringify(payload));
 }
 
+async function dispatchAutomaticWhatsapp(
+  whatsappMessage: string,
+  meta: {
+    name: string;
+    email: string;
+    phone: string;
+    city: string;
+    state: string;
+    subject: string;
+  }
+): Promise<boolean> {
+  const webhookUrl = (process.env.WHATSAPP_WEBHOOK_URL || '').trim();
+  const webhookToken = (process.env.WHATSAPP_WEBHOOK_TOKEN || '').trim();
+  if (webhookUrl) {
+    try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (webhookToken) {
+        headers.Authorization = `Bearer ${webhookToken}`;
+        headers.apikey = webhookToken;
+      }
+      const res = await fetch(webhookUrl, {
+        method: 'POST',
+        headers,
+        signal: AbortSignal.timeout(5500),
+        body: JSON.stringify({
+          to: WHATSAPP_NUMBER,
+          number: WHATSAPP_NUMBER,
+          phone: WHATSAPP_NUMBER,
+          text: whatsappMessage,
+          message: whatsappMessage,
+          lead: meta,
+        }),
+      });
+      if (res.ok) return true;
+    } catch {
+      // fallback to next channel / direct link
+    }
+  }
+
+  const callmebotKey = (process.env.CALLMEBOT_APIKEY || '').trim();
+  if (callmebotKey) {
+    try {
+      const url = `https://api.callmebot.com/whatsapp.php?phone=${encodeURIComponent(
+        WHATSAPP_NUMBER
+      )}&text=${encodeURIComponent(whatsappMessage)}&apikey=${encodeURIComponent(callmebotKey)}`;
+      const res = await fetch(url, { signal: AbortSignal.timeout(5500) });
+      if (res.ok) return true;
+    } catch {
+      // fallback to direct link
+    }
+  }
+
+  const cloudToken = (process.env.WHATSAPP_CLOUD_TOKEN || '').trim();
+  const cloudPhoneId = (process.env.WHATSAPP_PHONE_NUMBER_ID || '').trim();
+  if (cloudToken && cloudPhoneId) {
+    try {
+      const res = await fetch(`https://graph.facebook.com/v21.0/${cloudPhoneId}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${cloudToken}`,
+        },
+        signal: AbortSignal.timeout(5500),
+        body: JSON.stringify({
+          messaging_product: 'whatsapp',
+          to: WHATSAPP_NUMBER,
+          type: 'text',
+          text: { body: whatsappMessage },
+        }),
+      });
+      if (res.ok) return true;
+    } catch {
+      // fallback to direct link
+    }
+  }
+
+  return false;
+}
+
 export default async function handler(req: VercelRequest, res: ServerResponse) {
+  if (req.method === 'GET') {
+    const reqUrl = new URL(req.url || '/api/proposta', 'http://localhost');
+    const emailParam = (reqUrl.searchParams.get('email') || '').trim().toLowerCase();
+    const langParam = reqUrl.searchParams.get('lang');
+    const lang = langParam === 'es' || langParam === 'en' ? langParam : 'pt';
+    const emailErr = await validateEmailByLanguage(emailParam, lang);
+    if (emailErr) {
+      sendJson(res, 200, { ok: false, error: emailErr });
+      return;
+    }
+    sendJson(res, 200, { ok: true });
+    return;
+  }
+
   if (req.method !== 'POST') {
     sendJson(res, 405, { ok: false, error: 'Método não permitido.' });
     return;
@@ -458,11 +551,23 @@ export default async function handler(req: VercelRequest, res: ServerResponse) {
     whatsappMessage
   )}`;
 
+  const autoSent = await dispatchAutomaticWhatsapp(whatsappMessage, {
+    name,
+    email,
+    phone,
+    city,
+    state,
+    subject,
+  });
+
   sendJson(res, 200, {
     ok: true,
     channel: 'whatsapp',
+    autoSent,
     whatsappUrl,
     whatsappMessage,
-    message: 'Proposta validada para envio direto pelo WhatsApp.',
+    message: autoSent
+      ? 'Mensagem enviada automaticamente para o WhatsApp do proprietário.'
+      : 'Proposta validada para envio direto pelo WhatsApp.',
   });
 }

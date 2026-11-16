@@ -232,6 +232,8 @@ export interface SiteTranslations {
     errorConnection: string;
     modalTitle: string;
     modalDesc: string;
+    autoSentTitle: string;
+    autoSentDesc: string;
     openWhatsappBtn: string;
     copyMessageBtn: string;
     copiedMessageBtn: string;
@@ -825,9 +827,12 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       errorServerFallback:
         'Não foi possível validar sua proposta. Verifique os campos obrigatórios e tente novamente.',
       errorConnection: 'Erro de conexão ao preparar sua proposta. Tente novamente em instantes.',
-      modalTitle: 'Proposta pronta para enviar no WhatsApp.',
+      modalTitle: 'WhatsApp aberto com sua mensagem!',
       modalDesc:
-        'Toque no botão abaixo para abrir a conversa no WhatsApp com todos os dados preenchidos direto para o proprietário.',
+        'A conversa já foi iniciada com todos os dados preenchidos para o WhatsApp (48) 99835-1959. Caso não tenha aberto automaticamente, toque abaixo:',
+      autoSentTitle: 'Mensagem enviada automaticamente para o WhatsApp!',
+      autoSentDesc:
+        'Sua proposta acabou de cair no WhatsApp oficial do proprietário (48) 99835-1959. Se desejar acompanhar pela conversa, toque abaixo:',
       openWhatsappBtn: 'Abrir conversa no WhatsApp',
       copyMessageBtn: 'Copiar mensagem',
       copiedMessageBtn: 'Mensagem copiada!',
@@ -1478,9 +1483,12 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       errorServerFallback:
         'No fue posible validar su propuesta. Verifique los campos obligatorios e intente nuevamente.',
       errorConnection: 'Error de conexión al preparar su propuesta. Inténtelo nuevamente en unos instantes.',
-      modalTitle: 'Propuesta lista para enviar por WhatsApp.',
+      modalTitle: '¡WhatsApp abierto con su mensaje!',
       modalDesc:
-        'Toque el botón de abajo para abrir el chat de WhatsApp con todos los datos listos directo para el propietario.',
+        'El chat ya se abrió con todos los datos listos para el WhatsApp (48) 99835-1959. Si no se abrió automáticamente, toque abajo:',
+      autoSentTitle: '¡Mensaje enviado automáticamente a WhatsApp!',
+      autoSentDesc:
+        'Su propuesta ya llegó al WhatsApp oficial del propietario (48) 99835-1959. Si desea abrir el chat, toque abajo:',
       openWhatsappBtn: 'Abrir chat en WhatsApp',
       copyMessageBtn: 'Copiar mensaje',
       copiedMessageBtn: '¡Mensaje copiado!',
@@ -2131,9 +2139,12 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       errorServerFallback:
         'Unable to validate your offer. Please check the required fields and try again.',
       errorConnection: 'Connection error while preparing your offer. Please try again shortly.',
-      modalTitle: 'Offer ready to send via WhatsApp.',
+      modalTitle: 'WhatsApp opened with your message!',
       modalDesc:
-        'Tap the button below to open WhatsApp with all details pre-filled straight to the owner.',
+        'The chat was launched with all details pre-filled for WhatsApp +55 (48) 99835-1959. If it did not open automatically, tap below:',
+      autoSentTitle: 'Message automatically delivered to WhatsApp!',
+      autoSentDesc:
+        'Your offer was dispatched to the owner’s WhatsApp +55 (48) 99835-1959. Tap below if you also want to open the chat:',
       openWhatsappBtn: 'Open WhatsApp chat',
       copyMessageBtn: 'Copy message',
       copiedMessageBtn: 'Message copied!',
