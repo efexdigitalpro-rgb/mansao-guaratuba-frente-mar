@@ -13,7 +13,7 @@ export const BROKER_CONFIG = {
 };
 
 export const HERO_MEDIA = {
-  image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.02__1__e28c8826.jpeg',
+  image: '/assets/clean/hero-aerial.jpg',
   alt: 'Vista aérea real da mansão pé na areia ao lado da Ponte de Guaratuba, com vista panorâmica para a Baía de Guaratuba e oceano',
 };
 
@@ -53,7 +53,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Vista Aérea Real · Pé na Areia · Baía e Mar',
     description:
       'Implantação exclusiva à beira-mar com 1.100 m² de área construída, vista definitiva para a baía e acesso imediato junto à Ponte de Guaratuba.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.10__3__d03c5370.jpeg',
+    image: '/assets/clean/aerea-ponte.jpg',
     alt: 'Foto aérea real mostrando a mansão à beira-mar exatamente ao lado da Ponte de Guaratuba',
   },
   {
@@ -63,7 +63,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Grafite, Madeira Natural & Envidraçamento Panorâmico',
     description:
       'Volumetria em três pavimentos com guarda-corpos em vidro, varandas escalonadas, fechamento em vidro retrátil e gramado com saída direta para a areia.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.06__3__4ebc098e.jpeg',
+    image: '/assets/clean/fachada-mar.jpg',
     alt: 'Fachada voltada para o mar da mansão em grafite, madeira e vidro com gramado frontal',
   },
   {
@@ -73,7 +73,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Entrada Social Imponente · Paisagismo & Controle de Acesso',
     description:
       'Entrada principal com revestimento em textura grafite, painel em madeira natural, amplo recuo pavimentado e janela panorâmica em vidro espelhado.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.09__3__0a1aa677.jpeg',
+    image: '/assets/clean/fachada-rua.jpg',
     alt: 'Fachada frontal da mansão com acabamento grafite, painel ripado e esquadria espelhada',
   },
   {
@@ -83,7 +83,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Deck Solarium · Vista Direta para a Praia',
     description:
       'Piscina privativa com perfil linear de LED embutido, guarda-corpo em vidro para preservar o horizonte marinho e espreguiçadeiras voltadas para o oceano.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.05_917b601f.jpeg',
+    image: '/assets/clean/piscina-praia.jpg',
     alt: 'Piscina privativa com iluminação em LED, espreguiçadeiras e vista direta para o mar',
   },
   {
@@ -93,7 +93,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Pergolado em Grafite · Vista Mar e Serra do Mar',
     description:
       'Terraço de contemplação no pavimento superior com balanços suspensos em corda náutica, mesa lareira e vista para as montanhas e oceano.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.01__3__a7b59ba4.jpeg',
+    image: '/assets/clean/terrace-balancos.jpg',
     alt: 'Terraço superior com vigas em grafite, balanços suspensos e lareira externa',
   },
 
@@ -105,7 +105,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Varanda Gourmet Integrada · LED Linear no Teto',
     description:
       "Área de convivência coberta contornada por espelho d'água cristalino com pisantes flutuantes em travertino, colunas em grafite e vista livre para a praia.",
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.01__1__679481b0.jpeg',
+    image: '/assets/clean/espelho-dagua-mar.jpg',
     alt: "Varanda coberta com espelho d'água, pisantes em pedra e vista direta para a praia",
   },
   {
@@ -115,7 +115,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Pé-Direito Duplo · Forro Ripado e Perfis de LED',
     description:
       'Ambiente integrado com escadaria flutuante iluminada em LED, guarda-corpo em vidro estrutural, forro amadeirado ripado e hidromassagem interna.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.51.55_f073fa58.jpeg',
+    image: '/assets/clean/living-escadaria-hidro.jpg',
     alt: 'Living social com escadaria flutuante iluminada, forro ripado e hidro interna',
   },
   {
@@ -125,7 +125,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Panorâmica Piso-Teto · Conexão Total Interno/Externo',
     description:
       'Spa interno aquecido posicionado junto às esquadrias piso-teto com vista direta para a piscina externa e a faixa de areia de Guaratuba.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.04_1bd99fd6.jpeg',
+    image: '/assets/clean/hidro-vista-piscina.jpg',
     alt: 'Hidro spa interno com vista através do vidro para a piscina externa e o mar',
   },
   {
@@ -135,7 +135,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Conceito Aberto Frente Mar · Mármore e Marcenaria Fendi',
     description:
       'Amplo living em tons fendi e off-white com mesa de jantar para 10 lugares, elevador privativo revestido em mármore e adega climatizada com portas em vidro.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.13__1__21841080.jpeg',
+    image: '/assets/clean/living-adega-elevador.jpg',
     alt: 'Sala de jantar e estar integradas com adega climatizada, elevador e vista para o mar',
   },
   {
@@ -145,7 +145,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Parrilla, Cervejeiras e Garrafeiro Suspenso Frente Mar',
     description:
       'Lounge gourmet completo com bancada em pedra escura, chopeira integrada, parrilla revestida em mármore escuro, adegas e vista frontal para o mar.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.05__1__495ccf8d.jpeg',
+    image: '/assets/clean/espaco-gourmet-bar.jpg',
     alt: 'Espaço gourmet e bar completo com chopeira, garrafeiro suspenso e vista para o mar',
   },
   {
@@ -155,7 +155,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Automação & Linha Profissional Embutida',
     description:
       'Cozinha planejada com ilha central em mármore branco, cooktop e chapa embutidos, fornos em inox e refrigerador smart integrado ao jantar.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.10_40dc8218.jpeg',
+    image: '/assets/clean/cozinha-gourmet.jpg',
     alt: 'Cozinha gourmet em tons claros com ilha de mármore e eletrodomésticos em inox',
   },
 
@@ -167,7 +167,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Fibra Óptica · Projetor HD · Sofá Modular Profundo',
     description:
       'Sala de cinema dedicada com isolamento acústico completo, teto estrelado em fibra óptica com iluminação azul cênica e projetor de alta definição.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.00_e89c2932.jpeg',
+    image: '/assets/clean/home-cinema-teto.jpg',
     alt: 'Home cinema privativo com teto estrelado azul, projetor e sofá modular amplo',
   },
   {
@@ -177,7 +177,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Sistema Surround · Automação de Cenas',
     description:
       'Ângulo voltado para a tela de projeção de grande formato com caixas acústicas dedicadas, painel ripado lateral e climatização silenciosa.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.05__4__f81c8b16.jpeg',
+    image: '/assets/clean/home-cinema-tela.jpg',
     alt: 'Vista da tela de cinema, equipamento de áudio e teto estrelado do home theater',
   },
   {
@@ -187,7 +187,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Equipamentos Profissionais · Vista Panorâmica',
     description:
       'Espaço fitness completo com estação multifuncional, esteira, pesos livres, parede espelhada e janelas panorâmicas voltadas para o oceano e a serra.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.10__1__2404e132.jpeg',
+    image: '/assets/clean/academia-frente-mar.jpg',
     alt: 'Academia privativa equipada com aparelhos profissionais e vista para o mar',
   },
 
@@ -199,7 +199,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Terraço Privativo · Integração com Hidro & Home Office',
     description:
       'Suíte principal de altíssimo padrão com cama king, TV motorizada embutida no forro, rede de descanso voltada para a praia e bancada de escritório.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.09_19b03c98.jpeg',
+    image: '/assets/clean/suite-master-panoramica.jpg',
     alt: 'Suíte master ampla com cama king, TV retrátil no teto, rede e vista para o mar',
   },
   {
@@ -209,7 +209,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Banheira de Hidromassagem · Chaise Lounge',
     description:
       'Área íntima de relaxamento dentro da suíte master equipada com banheira de hidromassagem elevada, forro com vigas amadeiradas e varanda frente mar.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.10__2__8e0bbae6.jpeg',
+    image: '/assets/clean/suite-master-hidro.jpg',
     alt: 'Banheira de hidromassagem na suíte master com chaise laranja e vista para o mar',
   },
   {
@@ -219,7 +219,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Portas em Espelho Piso-Teto · Iluminação Linear LED',
     description:
       'Closet espaçoso com armários espelhados do chão ao teto, gaveteiro central tipo ilha, carpete macio e entrada de luz natural.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.02_d86fdc47.jpeg',
+    image: '/assets/clean/closet-ilha.jpg',
     alt: 'Closet amplo com armários espelhados, ilha central de gavetas e iluminação LED',
   },
   {
@@ -229,7 +229,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Espelho Camarim · Armários em Vidro Armado',
     description:
       'Espaço exclusivo anexo ao closet com penteadeira ampla e espelho com moldura iluminada em LED, poltrona clássica e armários com iluminação interna.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.06__1__5be49f44.jpeg',
+    image: '/assets/clean/closet-camarinha.jpg',
     alt: 'Camarinha da suíte master com penteadeira iluminada em LED e cômoda planejada',
   },
   {
@@ -239,7 +239,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Box em Vidro com Perfil Dourado · Mármore Calacatta',
     description:
       'Banheiro da suíte master revestido em porcelanato marmorizado com bancada dupla, marcenaria escura, espelhos bisotados e box com acabamento dourado.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.07_925e68ea.jpeg',
+    image: '/assets/clean/banho-master.jpg',
     alt: 'Banheiro master com duas cubas, marcenaria grafite e box com perfil dourado',
   },
   {
@@ -249,7 +249,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Mural Basquete Exclusivo · Luminária Aro & Iluminação LED',
     description:
       'Suíte climatizada com painel artístico esportivo personalizado na cabeceira, luminária temática, cortinas com sanca iluminada e marcenaria sob medida.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.03__3__e2e0b23e.jpeg',
+    image: '/assets/clean/suite-esportiva.jpg',
     alt: 'Suíte temática jovem esportiva com mural de basquete, luminária de cesta e TV',
   },
   {
@@ -259,7 +259,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Marcenaria Lúdica Sob Medida · Armário Espelhado',
     description:
       'Dormitório planejado com cama beliche, escorregador em madeira clara, mural temático espacial, bancada de estudos e armários espelhados.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.06_1c3ec661.jpeg',
+    image: '/assets/clean/suite-infantil-espacial.jpg',
     alt: 'Suíte infantil temática espacial com beliche em madeira, escorregador e closet espelhado',
   },
 
@@ -271,7 +271,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Paredes em Grafite · Piso em Porcelanato Amadeirado',
     description:
       'Amplo pátio e garagem coberta por estrutura metálica e vidro temperado, perfis verticais de LED e portão automatizado em tom grafite.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.03_cb09f89f.jpeg',
+    image: '/assets/clean/garagem-pergola-vidro.jpg',
     alt: 'Garagem coberta com cobertura em vidro e estrutura metálica escura e piso amadeirado',
   },
   {
@@ -281,7 +281,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: 'Múltiplas Vagas · Acesso Direto da Rua à Orla',
     description:
       'Garagem de grande porte comportando múltiplos veículos e SUVs com área coberta fechada, iluminação embutida e circulação direta até a área de lazer.',
-    image: '/assets/aistudio/WhatsApp_Image_2026-11-14_at_09.52.02__2__4dada8f0.jpeg',
+    image: '/assets/clean/garagem-acesso-mar.jpg',
     alt: 'Vista ampla da garagem coberta com dupla área de estacionamento e corredor para o mar',
   },
 ];
