@@ -76,6 +76,14 @@ export interface SiteTranslations {
     dossierTitle: string;
     dossierDesc: string;
     dossierButton: string;
+    videoTour: {
+      eyebrow: string;
+      title: string;
+      description: string;
+      points: [string, string, string];
+      ctaButton: string;
+      videoAria: string;
+    };
     highlights: Record<string, TranslatedHighlight>;
     accordions: Record<string, TranslatedAccordion>;
   };
@@ -374,6 +382,19 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       dossierDesc:
         'Consulte os detalhes estruturais, equipamentos de lazer e soluções de conforto térmico e acústico presentes na mansão.',
       dossierButton: 'Solicitar Dossiê Completo',
+      videoTour: {
+        eyebrow: 'Tour em Vídeo · 1 min 28 s',
+        title: 'Conheça cada pavimento e a vista frente ao mar em vídeo',
+        description:
+          'Percorra os principais ambientes da mansão em Guaratuba: da implantação pé na areia e piscina de borda contínua para o oceano até a cozinha gourmet, adega, escadaria flutuante em LED, spa interno, suíte master de 160 m², cinema estrelado e localização ao lado da ponte.',
+        points: [
+          'Fachada frente mar, piscina, cozinha gourmet, adega climatizada e chopeira',
+          'Escada flutuante em LED, spa interno aquecido, academia e home cinema estrelado',
+          'Cinco dormitórios climatizados, suíte master de 160 m² e vista para a Ponte de Guaratuba',
+        ],
+        ctaButton: 'Fazer Proposta ou Agendar Visita',
+        videoAria: 'Tour em vídeo pela mansão frente ao mar em Guaratuba',
+      },
       highlights: {
         '01': {
           title: '1.100 m² Pé na Areia ao Lado da Ponte',
@@ -1030,6 +1051,19 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       dossierDesc:
         'Consulte los detalles estructurales, equipamiento de ocio y soluciones de confort térmico y acústico de la mansión.',
       dossierButton: 'Solicitar Dossier Completo',
+      videoTour: {
+        eyebrow: 'Tour en Video · 1 min 28 s',
+        title: 'Recorra cada planta y la vista frente al mar en video',
+        description:
+          'Explore los principales espacios de la mansión en Guaratuba: desde el frente de playa y la piscina hacia el océano hasta la cocina gourmet, cava, escalera flotante LED, spa interior, suite principal de 160 m², cine estrellado y ubicación junto al puente.',
+        points: [
+          'Fachada frente al mar, piscina, cocina gourmet, cava climatizada y barra con tirador',
+          'Escalera flotante LED, spa interior climatizado, gimnasio y cine en casa estrellado',
+          'Cinco dormitorios climatizados, suite principal de 160 m² y vista al Puente de Guaratuba',
+        ],
+        ctaButton: 'Hacer Propuesta o Agendar Visita',
+        videoAria: 'Tour en video por la mansión frente al mar en Guaratuba',
+      },
       highlights: {
         '01': {
           title: '1.100 m² Frente al Mar junto al Puente',
@@ -1686,6 +1720,19 @@ export const TRANSLATIONS: Record<Language, SiteTranslations> = {
       dossierDesc:
         'Explore the structural details, resort-grade leisure equipment, and thermal and acoustic engineering integrated throughout the mansion.',
       dossierButton: 'Request Full Dossier',
+      videoTour: {
+        eyebrow: 'Video Walkthrough · 1 min 28 s',
+        title: 'Experience every floor and oceanfront view in motion',
+        description:
+          'Walk through the highlights of the Guaratuba beachfront mansion: from direct sand access and ocean-view pool to the gourmet kitchen, wine cellar, LED floating staircase, indoor spa, 160 m² master suite, starlit theater, and location beside the bridge.',
+        points: [
+          'Oceanfront facade, infinity-feel pool, gourmet bar, wine cellar, and draft dispenser',
+          'Floating LED glass staircase, heated indoor hydro spa, gym, and starlit home cinema',
+          'Five climate-controlled bedrooms, 160 m² master suite, and Guaratuba Bridge views',
+        ],
+        ctaButton: 'Make an Offer or Book Viewing',
+        videoAria: 'Video tour of the beachfront mansion in Guaratuba',
+      },
       highlights: {
         '01': {
           title: '1,100 m² Beachfront Beside the Bridge',

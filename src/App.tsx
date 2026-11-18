@@ -79,7 +79,10 @@ function AppContent() {
       <main className="flex-1">
         <Hero onOpenProposal={openBlankProposal} />
         <div className="reveal-section">
-          <PropertyShowcase onRequestDossier={handleRequestDossier} />
+          <PropertyShowcase
+            onRequestDossier={handleRequestDossier}
+            onOpenProposal={openBlankProposal}
+          />
         </div>
         <div className="reveal-section">
           <GallerySection onConsultRoom={handleConsultRoom} />

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, Check, Sparkles } from 'lucide-react';
+import { ChevronDown, Check, Film, Send, Sparkles } from 'lucide-react';
 import {
   ARCHITECTURAL_HIGHLIGHTS,
   TECHNICAL_ACCORDIONS,
@@ -8,9 +8,10 @@ import { useLanguage } from '../contexts/LanguageContext';
 
 interface PropertyShowcaseProps {
   onRequestDossier: () => void;
+  onOpenProposal?: () => void;
 }
 
-export function PropertyShowcase({ onRequestDossier }: PropertyShowcaseProps) {
+export function PropertyShowcase({ onRequestDossier, onOpenProposal }: PropertyShowcaseProps) {
   const { t } = useLanguage();
   const [openAccordionId, setOpenAccordionId] = useState<string>(TECHNICAL_ACCORDIONS[0].id);
 
@@ -66,8 +67,60 @@ export function PropertyShowcase({ onRequestDossier }: PropertyShowcaseProps) {
           })}
         </div>
 
+        {/* Compact Video Tour Showcase (9:16 portrait framed cleanly without dominating height) */}
+        <div className="bg-[#0F2942] text-[#FAF8F5] border border-[#C59B27]/40 rounded-xl p-5 sm:p-8 lg:p-10 mb-10 sm:mb-14 shadow-sm">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 items-center">
+            <div className="md:col-span-5 lg:col-span-4 flex justify-center">
+              <div className="w-full max-w-[230px] sm:max-w-[260px] aspect-[9/16] rounded-lg overflow-hidden border border-[#C59B27]/55 bg-[#081726] shadow-2xl">
+                <video
+                  src="/assets/aistudio/video_casa_guaratuba_d9bb5e66.mp4"
+                  poster="/assets/clean/video-tour-poster.jpg"
+                  controls
+                  playsInline
+                  preload="metadata"
+                  aria-label={t.showcase.videoTour.videoAria}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+
+            <div className="md:col-span-7 lg:col-span-8">
+              <p className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-[#C59B27] mb-2">
+                <Film className="w-4 h-4 shrink-0" aria-hidden="true" />
+                {t.showcase.videoTour.eyebrow}
+              </p>
+
+              <h3 className="font-display text-2xl sm:text-3xl font-semibold text-[#FAF8F5] leading-tight mb-3">
+                {t.showcase.videoTour.title}
+              </h3>
+
+              <p className="text-sm sm:text-base text-[#EAE5DC] leading-relaxed mb-5 max-w-2xl">
+                {t.showcase.videoTour.description}
+              </p>
+
+              <ul className="space-y-2.5 mb-6 text-xs sm:text-sm text-[#EAE5DC]">
+                {t.showcase.videoTour.points.map((point) => (
+                  <li key={point} className="flex items-start gap-2.5">
+                    <Check className="w-4 h-4 text-[#C59B27] shrink-0 mt-0.5" aria-hidden="true" />
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <button
+                type="button"
+                onClick={onOpenProposal ?? onRequestDossier}
+                className="w-full sm:w-auto min-h-[48px] inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold bg-[#C59B27] text-[#1A1A1A] hover:bg-[#D4AA36] rounded-md transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FAF8F5]"
+              >
+                <Send className="w-4 h-4 shrink-0" aria-hidden="true" />
+                {t.showcase.videoTour.ctaButton}
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Technical Specifications Accordion + Direct Dossier Request */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 pt-6 sm:pt-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 pt-2 sm:pt-4 items-start">
           <div className="lg:col-span-5">
             <p className="text-xs sm:text-sm font-medium text-[#0F2942] mb-2">
               {t.showcase.dossierEyebrow}
